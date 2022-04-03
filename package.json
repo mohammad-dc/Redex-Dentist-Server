@@ -4,8 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "yarn start",
-    "dev": "yarn run dev",
+    "start": "node ./build/app.js",
+    "dev": "nodemon ./src/app.ts",
     "build": "yarn && rm -fr ./build && tcs"
   },
   "dependencies": {
@@ -51,6 +51,7 @@
     "@types/sharp": "^0.30.0",
     "@types/toobusy-js": "^0.5.2",
     "@types/uuid": "^8.3.4",
-    "@types/yup": "^0.29.13"
+    "@types/yup": "^0.29.13",
+    "nodemon": "^2.0.15"
   }
 }
