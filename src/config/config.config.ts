@@ -30,9 +30,9 @@ const MONGO_USERNAME = process.env.MONGO_USERNAME;
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
 const MONGO_HOST = process.env.MONGO_HOST;
 
-//jwt users
-// const JWT_SECRET = process.env.JWT_SECRET;
-// const JWT_ISSUER = process.env.JWT_ISSUER;
+// jwt
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_ISSUER = process.env.JWT_ISSUER;
 
 //jwt admin
 // const JWT_SECRET_ADMIN = process.env.JWT_SECRET_ADMIN;
@@ -73,21 +73,21 @@ const SERVER = {
   port: SERVER_PORT,
 };
 
-// const JWT = {
-//   user: {
-//     secret: JWT_SECRET,
-//     issuer: JWT_ISSUER,
-//   },
-//   admin: {
-//     secret: JWT_SECRET_ADMIN,
-//     issuer: JWT_ISSUER_ADMIN,
-//   }
-// };
+const JWT = {
+  user: {
+    secret: JWT_SECRET,
+    issuer: JWT_ISSUER,
+  },
+  // admin: {
+  //   secret: JWT_SECRET_ADMIN,
+  //   issuer: JWT_ISSUER_ADMIN,
+  // }
+};
 
 const config = {
   mongo: MONGO,
   server: SERVER,
-  //   jwt: JWT,
+  jwt: JWT,
   //   pusher: PUSHER,
   //   aws: AWS,
 };
