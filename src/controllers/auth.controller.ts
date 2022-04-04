@@ -33,29 +33,35 @@ const login = (req: Request, res: Response, next: NextFunction) => {
   const { role } = req.params;
   const { phone, password } = req.body;
 
-  usersModel.findOne({ phone, role }, body.ACCOUNT).then(async (result) => {
-    if (!result) response.phoneWrong(res);
-    else {
-      const compare = await comparePassword(password, result.password);
-      compare
-        ? signJWT(result._id, role, result.name, (error, token) => {
-            response.loginSuccess(res, result, token || "");
-          })
-        : response.passwordWrong(res);
-    }
-  });
+  usersModel
+    .findOne({ phone, role }, body.ACCOUNT)
+    .populate({ path: "city", select: "_id city" })
+    .then(async (result) => {
+      if (!result) response.phoneWrong(res);
+      else {
+        const compare = await comparePassword(password, result.password);
+        compare
+          ? signJWT(result._id, role, result.name, (error, token) => {
+              response.loginSuccess(res, result, token || "");
+            })
+          : response.passwordWrong(res);
+      }
+    });
 };
 
 const verifyAccount = (req: Request, res: Response, next: NextFunction) => {
   const { user_id, role } = extractDataFromToken(req);
 
-  usersModel.findById({ _id: user_id }, body.ACCOUNT).then((result) => {
-    !result
-      ? response.accountNotExist(res)
-      : signJWT(result._id, role, result.name, (error, token) => {
-          response.loginSuccess(res, result, token || "");
-        });
-  });
+  usersModel
+    .findById({ _id: user_id }, body.ACCOUNT)
+    .populate({ path: "city", select: "_id city" })
+    .then((result) => {
+      !result
+        ? response.accountNotExist(res)
+        : signJWT(result._id, role, result.name, (error, token) => {
+            response.loginSuccess(res, result, token || "");
+          });
+    });
 };
 
 export default { register, login, verifyAccount };
