@@ -34,11 +34,23 @@ const signupSuccess = (res: Response) =>
     message: messages.SIGNUP_SUCCESS,
   });
 
+const addedSuccess = (res: Response) =>
+  res.status(status.CREATED).json({
+    success: true,
+    message: messages.ADDED_SUCCESS,
+  });
+
 const loginSuccess = (res: Response, result: any, token: string) =>
   res.status(status.OK).json({
     success: true,
     message: messages.LOGIN_SUCCESS,
     response: { result, token },
+  });
+
+const getSuccess = (res: Response, results: any, count?: number) =>
+  res.status(status.OK).json({
+    success: true,
+    response: { results, count: count || 0 },
   });
 
 //500
@@ -57,4 +69,6 @@ export default {
   phoneWrong,
   passwordWrong,
   accountNotExist,
+  addedSuccess,
+  getSuccess,
 };
