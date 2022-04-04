@@ -7,4 +7,9 @@ const ACCOUNT = {
   address: 1,
 };
 
-export default { ACCOUNT };
+const CITIES = {
+  _id: 1,
+  city: 1,
+};
+
+export default { ACCOUNT, CITIES };
