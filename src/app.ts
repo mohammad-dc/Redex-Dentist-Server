@@ -13,6 +13,7 @@ import config from "./config/config.config";
 //routes
 import { authRouter } from "./routes/auth.route";
 import { citiesRouter } from "./routes/cities.route";
+import { notificationsRouter } from "./routes/notifications.route";
 
 //connect MongoDB
 mongoose.connect(config.mongo.url, config.mongo.options);
@@ -53,6 +54,7 @@ app.use(
 //routes
 app.use("/api/v1/auth/", authRouter);
 app.use("/api/v1/cities/", citiesRouter);
+app.use("/api/v1/notifications/", notificationsRouter);
 
 try {
   app.listen(config.server.port, () =>
