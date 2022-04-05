@@ -40,6 +40,12 @@ const addedSuccess = (res: Response) =>
     message: messages.ADDED_SUCCESS,
   });
 
+const updatedSuccess = (res: Response) =>
+  res.status(status.OK).json({
+    success: true,
+    message: messages.UPDATED_SUCCESS,
+  });
+
 const loginSuccess = (res: Response, result: any, token: string) =>
   res.status(status.OK).json({
     success: true,
@@ -71,4 +77,5 @@ export default {
   accountNotExist,
   addedSuccess,
   getSuccess,
+  updatedSuccess,
 };
