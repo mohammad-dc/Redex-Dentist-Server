@@ -5,6 +5,7 @@ const PASSWORD_WRONG = "password not correct";
 const SOMETHING_WENT_WRONG = "something went wrong";
 const ACCOUNT_NOT_EXIST = "account not exist";
 const ADDED_SUCCESS = "added success";
+const UPDATED_SUCCESS = "updated success";
 
 export default {
   SIGNUP_SUCCESS,
@@ -14,4 +15,5 @@ export default {
   PASSWORD_WRONG,
   ACCOUNT_NOT_EXIST,
   ADDED_SUCCESS,
+  UPDATED_SUCCESS,
 };
