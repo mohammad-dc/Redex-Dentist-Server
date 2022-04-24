@@ -1,20 +1,26 @@
 import { Router } from "express";
-import authController from "../controllers/auth.controller";
+import { checkAccessTokenValidation } from "../middlewares/checkAccessTokenValidation";
 import { checkRequestValidation } from "../middlewares/requestValidation";
+import { AuthServices } from "../services/auth.service";
 import { loginSchema, registerSchema } from "../validations/auth.validation";
 
 export const authRouter = Router();
+const authServices = new AuthServices();
 
 authRouter.post(
   "/:role/register",
   checkRequestValidation(registerSchema),
-  authController.register
+  authServices.register
 );
 
 authRouter.post(
   "/:role/login",
   checkRequestValidation(loginSchema),
-  authController.login
+  authServices.login
 );
 
-authRouter.get("/verify", authController.verifyAccount);
+authRouter.get(
+  "/verify",
+  checkAccessTokenValidation,
+  authServices.verifyAccount
+);
