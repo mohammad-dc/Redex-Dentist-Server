@@ -1,23 +1,24 @@
 import { Router } from "express";
-import notificationsController from "../controllers/notifications.controller";
+import { NotificationsService } from "../services/notifications.service";
 import { checkAccessTokenValidation } from "../middlewares/checkAccessTokenValidation";
 
 export const notificationsRouter = Router();
+const notificationsService = new NotificationsService();
 
 notificationsRouter.get(
   "/get",
   checkAccessTokenValidation,
-  notificationsController.getAllUserNotifications
+  notificationsService.getAllUserNotifications
 );
 
 notificationsRouter.get(
   "/missing",
   checkAccessTokenValidation,
-  notificationsController.checkMissingNotifications
+  notificationsService.checkMissingNotifications
 );
 
 notificationsRouter.put(
   "/read",
   checkAccessTokenValidation,
-  notificationsController.setNotificationsAsRead
+  notificationsService.setNotificationsAsRead
 );
