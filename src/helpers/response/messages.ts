@@ -6,6 +6,7 @@ const SOMETHING_WENT_WRONG = "something went wrong";
 const ACCOUNT_NOT_EXIST = "account not exist";
 const ADDED_SUCCESS = "added success";
 const UPDATED_SUCCESS = "updated success";
+const UNAUTHORIZED = "the credential not authorized ";
 
 export default {
   SIGNUP_SUCCESS,
@@ -16,4 +17,5 @@ export default {
   ACCOUNT_NOT_EXIST,
   ADDED_SUCCESS,
   UPDATED_SUCCESS,
+  UNAUTHORIZED,
 };

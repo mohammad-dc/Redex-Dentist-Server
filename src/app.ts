@@ -24,7 +24,6 @@ db.once("error", (error) => {
 db.on("open", () => {
   console.info("Mongo Connected");
 });
-
 // app
 export const app = express();
 // mongodB session store

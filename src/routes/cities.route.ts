@@ -1,14 +1,16 @@
 import { Router } from "express";
-import citiesController from "../controllers/cities.controller";
+
 import { checkRequestValidation } from "../middlewares/requestValidation";
+import { CitiesServices } from "../services/cities.service";
 import { citiesSchema } from "../validations/cities.validation";
 
 export const citiesRouter = Router();
+const citiesService = new CitiesServices();
 
 citiesRouter.post(
   "/add",
   checkRequestValidation(citiesSchema),
-  citiesController.addCity
+  citiesService.addCity
 );
 
-citiesRouter.get("/get", citiesController.getCities);
+citiesRouter.get("/", citiesService.getCities);

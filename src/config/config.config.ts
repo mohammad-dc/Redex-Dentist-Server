@@ -58,7 +58,7 @@ const MONGO = {
   password: MONGO_PASSWORD,
   username: MONGO_USERNAME,
   options: MONGO_OPTIONS,
-  url: `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}`,
+  url: `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}`,
 };
 
 // const PUSHER = {

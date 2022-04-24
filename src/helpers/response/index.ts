@@ -27,6 +27,12 @@ const accountNotExist = (res: Response) =>
     message: messages.ACCOUNT_NOT_EXIST,
   });
 
+const unauthorized = (res: Response) =>
+  res.status(status.UNAUTHORIZED).json({
+    success: true,
+    message: messages.UNAUTHORIZED,
+  });
+
 //200
 const signupSuccess = (res: Response) =>
   res.status(status.CREATED).json({
@@ -78,4 +84,5 @@ export default {
   addedSuccess,
   getSuccess,
   updatedSuccess,
+  unauthorized,
 };
