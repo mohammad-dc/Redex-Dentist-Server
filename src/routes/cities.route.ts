@@ -4,7 +4,7 @@ import { checkRequestValidation } from "../middlewares/requestValidation";
 import { CitiesServices } from "../services/cities.service";
 import { citiesSchema } from "../validations/cities.validation";
 
-export const citiesRouter = Router();
+export const citiesRouter = Router({ mergeParams: true });
 const citiesService = new CitiesServices();
 
 citiesRouter.post(

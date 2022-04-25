@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./build/app.js",
     "dev": "nodemon ./src/app.ts",
-    "build": "yarn && rm -fr ./build && tcs"
+    "build": "yarn && rm -fr ./build && tsc"
   },
   "dependencies": {
     "@pusher/push-notifications-web": "^1.1.0",

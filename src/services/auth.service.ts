@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import mongoose from "mongoose";
 import { usersRoles } from "../enums/auth.enum";
 import { comparePassword, hashPassword } from "../functions/bcryptPassword";
 import { extractDataFromToken, signJWT } from "../functions/jwt";
@@ -55,20 +56,35 @@ export class AuthServices {
 
   //login dr or patient
   async login(req: Request, res: Response, next: NextFunction) {
-    const { role } = req.params;
+    const { role, lang } = req.params;
     const { phone, password } = req.body;
 
     try {
       const result = await usersModel
-        .findOne({ phone, role }, body.ACCOUNT)
-        .populate({ path: "city", select: "_id city" });
+        .aggregate([])
+        .match({ phone, role })
+        .lookup({
+          as: "city",
+          localField: "city",
+          from: "cities",
+          foreignField: "_id",
+        })
+        .unwind("city")
+        .project({
+          _id: "$_id",
+          name: "$name",
+          phone: "$phone",
+          image_url: "$image_url",
+          city: lang === "ar" ? "$city.city_ar" : "$city.city_en",
+          address: "$address",
+        });
 
-      if (!result) response.phoneWrong(res);
+      if (!result[0]) response.phoneWrong(res);
       else {
-        const compare = await comparePassword(password, result.password);
+        const compare = await comparePassword(password, result[0].password);
         compare
-          ? signJWT(result._id, role, result.name, (error, token) => {
-              response.loginSuccess(res, result, token || "");
+          ? signJWT(result[0]._id, role, result[0].name, (error, token) => {
+              response.loginSuccess(res, result[0], token || "");
             })
           : response.passwordWrong(res);
       }
@@ -79,17 +95,33 @@ export class AuthServices {
 
   //verify dr or patient
   async verifyAccount(req: Request, res: Response, next: NextFunction) {
+    const { lang } = req.params;
     const { user_id, role } = extractDataFromToken(req);
 
     const result = await usersModel
-      .findById({ _id: user_id }, body.ACCOUNT)
-      .populate({ path: "city", select: "_id city" });
+      .aggregate([])
+      .match({ _id: new mongoose.Types.ObjectId(user_id) })
+      .lookup({
+        as: "city",
+        localField: "city",
+        from: "cities",
+        foreignField: "_id",
+      })
+      .unwind("city")
+      .project({
+        _id: "$_id",
+        name: "$name",
+        phone: "$phone",
+        image_url: "$image_url",
+        city: lang === "ar" ? "$city.city_ar" : "$city.city_en",
+        address: "$address",
+      });
 
     try {
-      !result
+      !result[0]
         ? response.accountNotExist(res)
-        : signJWT(result._id, role, result.name, (error, token) => {
-            response.loginSuccess(res, result, token || "");
+        : signJWT(result[0]._id, role, result[0].name, (error, token) => {
+            response.loginSuccess(res, result[0], token || "");
           });
     } catch (error) {
       response.somethingWentWrong(res, error as Error);

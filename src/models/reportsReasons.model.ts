@@ -2,7 +2,11 @@ import mongoose from "mongoose";
 
 const ReportsReasonsSchema = new mongoose.Schema(
   {
-    reason: {
+    reason_ar: {
+      type: String,
+      required: true,
+    },
+    reason_en: {
       type: String,
       required: true,
     },
