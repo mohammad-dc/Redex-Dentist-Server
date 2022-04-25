@@ -26,7 +26,7 @@ db.on("open", () => {
 });
 // app
 export const app = express();
-// mongodB session store
+// mongodB session storeredexDintistdb
 const MongoDBStore = connectMongoDBSession(session);
 const store = new MongoDBStore({
   uri: config.mongo.url,
@@ -51,8 +51,8 @@ app.use(
 );
 
 //routes
-app.use("/api/v1/auth/", authRouter);
-app.use("/api/v1/cities/", citiesRouter);
+app.use("/api/v1/:lang/auth/", authRouter);
+app.use("/api/v1/:lang/cities/", citiesRouter);
 app.use("/api/v1/notifications/", notificationsRouter);
 
 try {

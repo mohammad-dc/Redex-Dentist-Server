@@ -4,7 +4,7 @@ import { checkRequestValidation } from "../middlewares/requestValidation";
 import { AuthServices } from "../services/auth.service";
 import { loginSchema, registerSchema } from "../validations/auth.validation";
 
-export const authRouter = Router();
+export const authRouter = Router({ mergeParams: true });
 const authServices = new AuthServices();
 
 authRouter.post(
