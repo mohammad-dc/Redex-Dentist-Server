@@ -9,6 +9,7 @@ export class NotificationsService {
     res: Response,
     next: NextFunction
   ) {
+    const { lang } = req.params;
     const { skip, limit } = req.query;
     const { user_id } = extractDataFromToken(req);
 
@@ -24,7 +25,7 @@ export class NotificationsService {
       ]);
       response.getSuccess(res, result[0], result[1]);
     } catch (error) {
-      response.somethingWentWrong(res, error as Error);
+      response.somethingWentWrong(lang, res, error as Error);
     }
   }
 
@@ -33,6 +34,7 @@ export class NotificationsService {
     res: Response,
     next: NextFunction
   ) {
+    const { lang } = req.params;
     const { user_id } = extractDataFromToken(req);
     try {
       const result = await notifications.findOne({
@@ -44,7 +46,7 @@ export class NotificationsService {
         ? res.status(200).json({ success: true, response: { missing: true } })
         : res.status(200).json({ success: true, response: { missing: false } });
     } catch (error) {
-      response.somethingWentWrong(res, error as Error);
+      response.somethingWentWrong(lang, res, error as Error);
     }
   }
 
@@ -53,6 +55,7 @@ export class NotificationsService {
     res: Response,
     next: NextFunction
   ) {
+    const { lang } = req.params;
     const { _ids } = req.body;
     const { user_id } = extractDataFromToken(req);
 
@@ -61,9 +64,9 @@ export class NotificationsService {
         { _id: { $in: _ids }, receiver: { $in: [user_id] } },
         { $addToSet: { read_by: user_id } }
       );
-      response.updatedSuccess(res);
+      response.updatedSuccess(lang, res);
     } catch (error) {
-      response.somethingWentWrong(res, error as Error);
+      response.somethingWentWrong(lang, res, error as Error);
     }
   }
 }

@@ -17,6 +17,7 @@ export class AuthServices {
 
   //register dr or patient
   async register(req: Request, res: Response, next: NextFunction) {
+    const { lang } = req.params;
     const { role } = req.params;
     const { name, phone, password, city, address, clinic_name } = req.body;
 
@@ -48,9 +49,9 @@ export class AuthServices {
     try {
       const _user = new usersModel(user);
       await _user.save();
-      response.signupSuccess(res);
+      response.signupSuccess(lang, res);
     } catch (error) {
-      response.somethingWentWrong(res, error as Error);
+      response.somethingWentWrong(lang, res, error as Error);
     }
   }
 
@@ -79,17 +80,17 @@ export class AuthServices {
           address: "$address",
         });
 
-      if (!result[0]) response.phoneWrong(res);
+      if (!result[0]) response.phoneWrong(lang, res);
       else {
         const compare = await comparePassword(password, result[0].password);
         compare
           ? signJWT(result[0]._id, role, result[0].name, (error, token) => {
-              response.loginSuccess(res, result[0], token || "");
+              response.loginSuccess(lang, res, result[0], token || "");
             })
-          : response.passwordWrong(res);
+          : response.passwordWrong(lang, res);
       }
     } catch (error) {
-      response.somethingWentWrong(res, error as Error);
+      response.somethingWentWrong(lang, res, error as Error);
     }
   }
 
@@ -119,12 +120,12 @@ export class AuthServices {
 
     try {
       !result[0]
-        ? response.accountNotExist(res)
+        ? response.accountNotExist(lang, res)
         : signJWT(result[0]._id, role, result[0].name, (error, token) => {
-            response.loginSuccess(res, result[0], token || "");
+            response.loginSuccess(lang, res, result[0], token || "");
           });
     } catch (error) {
-      response.somethingWentWrong(res, error as Error);
+      response.somethingWentWrong(lang, res, error as Error);
     }
   }
 }

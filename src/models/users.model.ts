@@ -39,6 +39,9 @@ const UsersSchema = new mongoose.Schema(
       required: true,
     },
     work_time: WorkTimeSchema,
+    verification_code: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );

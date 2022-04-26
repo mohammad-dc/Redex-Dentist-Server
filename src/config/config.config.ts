@@ -19,6 +19,11 @@ const SERVER_HOSTNAME = process.env.SERVER_HOSTNAME;
 // const ORIGIN_URL = process.env.ORIGIN_URL;
 // const HOST = process.env.HOST;
 
+//twilio
+const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
+const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
+const TWILIO_SERVICE_SID = process.env.TWILIO_SERVICE_SID;
+
 //AWS
 // const AWS_PLATFORM_BUCKET_NAME = process.env.AWS_PLATFORM_BUCKET_NAME;
 // const AWS_PLATFORM_BUCKET_REGION = process.env.AWS_PLATFORM_BUCKET_REGION;
@@ -73,6 +78,12 @@ const SERVER = {
   port: SERVER_PORT,
 };
 
+const TWILIO = {
+  account_sid: TWILIO_ACCOUNT_SID,
+  auth_token: TWILIO_AUTH_TOKEN,
+  service_sid: TWILIO_SERVICE_SID,
+};
+
 const JWT = {
   user: {
     secret: JWT_SECRET,
@@ -88,6 +99,7 @@ const config = {
   mongo: MONGO,
   server: SERVER,
   jwt: JWT,
+  twilio: TWILIO,
   //   pusher: PUSHER,
   //   aws: AWS,
 };
