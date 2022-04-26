@@ -1,4 +1,4 @@
-import messages from "./messages";
+import { AR_MESSAGES, EN_MESSAGES } from "./messages";
 import status from "./status";
 import { Response } from "express";
 
@@ -9,53 +9,76 @@ const validationError = (res: Response, error: Error) =>
     message: error.message,
   });
 
-const phoneWrong = (res: Response) =>
+const phoneWrong = (lang: string, res: Response) =>
   res.status(status.BAD_REQUEST).json({
     success: true,
-    message: messages.PHONE_WRONG,
+    message: lang === "en" ? EN_MESSAGES.PHONE_WRONG : AR_MESSAGES.PHONE_WRONG,
   });
 
-const passwordWrong = (res: Response) =>
+const passwordWrong = (lang: string, res: Response) =>
   res.status(status.BAD_REQUEST).json({
     success: true,
-    message: messages.PASSWORD_WRONG,
+    message:
+      lang === "en" ? EN_MESSAGES.PASSWORD_WRONG : AR_MESSAGES.PASSWORD_WRONG,
   });
 
-const accountNotExist = (res: Response) =>
+const accountNotExist = (lang: string, res: Response) =>
   res.status(status.NOT_FOUND).json({
     success: true,
-    message: messages.ACCOUNT_NOT_EXIST,
+    message:
+      lang === "en"
+        ? EN_MESSAGES.ACCOUNT_NOT_EXIST
+        : AR_MESSAGES.ACCOUNT_NOT_EXIST,
   });
 
-const unauthorized = (res: Response) =>
+const unauthorized = (lang: string, res: Response) =>
   res.status(status.UNAUTHORIZED).json({
     success: true,
-    message: messages.UNAUTHORIZED,
+    message:
+      lang === "en" ? EN_MESSAGES.UNAUTHORIZED : AR_MESSAGES.UNAUTHORIZED,
   });
 
 //200
-const signupSuccess = (res: Response) =>
+const signupSuccess = (lang: string, res: Response) =>
   res.status(status.CREATED).json({
     success: true,
-    message: messages.SIGNUP_SUCCESS,
+    message:
+      lang === "en" ? EN_MESSAGES.SIGNUP_SUCCESS : AR_MESSAGES.SIGNUP_SUCCESS,
   });
 
-const addedSuccess = (res: Response) =>
+const addedSuccess = (lang: string, res: Response) =>
   res.status(status.CREATED).json({
     success: true,
-    message: messages.ADDED_SUCCESS,
+    message:
+      lang === "en" ? EN_MESSAGES.ADDED_SUCCESS : AR_MESSAGES.ADDED_SUCCESS,
   });
 
-const updatedSuccess = (res: Response) =>
-  res.status(status.OK).json({
+const sendVerificationCodeSuccess = (lang: string, res: Response) =>
+  res.status(status.CREATED).json({
     success: true,
-    message: messages.UPDATED_SUCCESS,
+    message:
+      lang === "en"
+        ? EN_MESSAGES.VERIFICATION_CODE_SENT
+        : AR_MESSAGES.VERIFICATION_CODE_SENT,
   });
 
-const loginSuccess = (res: Response, result: any, token: string) =>
+const updatedSuccess = (lang: string, res: Response) =>
   res.status(status.OK).json({
     success: true,
-    message: messages.LOGIN_SUCCESS,
+    message:
+      lang === "en" ? EN_MESSAGES.UPDATED_SUCCESS : AR_MESSAGES.UPDATED_SUCCESS,
+  });
+
+const loginSuccess = (
+  lang: string,
+  res: Response,
+  result: any,
+  token: string
+) =>
+  res.status(status.OK).json({
+    success: true,
+    message:
+      lang === "en" ? EN_MESSAGES.LOGIN_SUCCESS : AR_MESSAGES.LOGIN_SUCCESS,
     response: { result, token },
   });
 
@@ -66,10 +89,13 @@ const getSuccess = (res: Response, results: any, count?: number) =>
   });
 
 //500
-const somethingWentWrong = (res: Response, error: Error) =>
+const somethingWentWrong = (lang: string, res: Response, error: Error) =>
   res.status(status.INTERNAL_SERVER).json({
     success: false,
-    message: messages.SOMETHING_WENT_WRONG,
+    message:
+      lang === "en"
+        ? EN_MESSAGES.SOMETHING_WENT_WRONG
+        : AR_MESSAGES.SOMETHING_WENT_WRONG,
     error,
   });
 
@@ -85,4 +111,5 @@ export default {
   getSuccess,
   updatedSuccess,
   unauthorized,
+  sendVerificationCodeSuccess,
 };
