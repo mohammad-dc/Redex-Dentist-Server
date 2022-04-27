@@ -26,6 +26,9 @@ const UsersSchema = new mongoose.Schema(
     image_url: {
       type: String,
     },
+    bio: {
+      type: String,
+    },
     blocked: {
       type: Boolean,
       default: false,

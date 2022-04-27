@@ -1,6 +1,7 @@
 import { AR_MESSAGES, EN_MESSAGES } from "./messages";
 import status from "./status";
 import { Response } from "express";
+import { LangTypes } from "../../@types/app.type";
 
 // 400
 const validationError = (res: Response, error: Error) =>
@@ -9,20 +10,20 @@ const validationError = (res: Response, error: Error) =>
     message: error.message,
   });
 
-const phoneWrong = (lang: string, res: Response) =>
+const phoneWrong = (lang: LangTypes, res: Response) =>
   res.status(status.BAD_REQUEST).json({
     success: true,
     message: lang === "en" ? EN_MESSAGES.PHONE_WRONG : AR_MESSAGES.PHONE_WRONG,
   });
 
-const passwordWrong = (lang: string, res: Response) =>
+const passwordWrong = (lang: LangTypes, res: Response) =>
   res.status(status.BAD_REQUEST).json({
     success: true,
     message:
       lang === "en" ? EN_MESSAGES.PASSWORD_WRONG : AR_MESSAGES.PASSWORD_WRONG,
   });
 
-const accountNotExist = (lang: string, res: Response) =>
+const accountNotExist = (lang: LangTypes, res: Response) =>
   res.status(status.NOT_FOUND).json({
     success: true,
     message:
@@ -31,29 +32,47 @@ const accountNotExist = (lang: string, res: Response) =>
         : AR_MESSAGES.ACCOUNT_NOT_EXIST,
   });
 
-const unauthorized = (lang: string, res: Response) =>
+const unauthorized = (lang: LangTypes, res: Response) =>
   res.status(status.UNAUTHORIZED).json({
     success: true,
     message:
       lang === "en" ? EN_MESSAGES.UNAUTHORIZED : AR_MESSAGES.UNAUTHORIZED,
   });
 
+const verificationCodeWrong = (lang: LangTypes, res: Response) =>
+  res.status(status.BAD_REQUEST).json({
+    success: true,
+    message:
+      lang === "en"
+        ? EN_MESSAGES.VERIFICATION_CODE_WRONG
+        : AR_MESSAGES.VERIFICATION_CODE_WRONG,
+  });
+
+const oldPasswordWrong = (lang: LangTypes, res: Response) =>
+  res.status(status.BAD_REQUEST).json({
+    success: true,
+    message:
+      lang === "en"
+        ? EN_MESSAGES.OLD_PASSWORD_WRONG
+        : AR_MESSAGES.OLD_PASSWORD_WRONG,
+  });
+
 //200
-const signupSuccess = (lang: string, res: Response) =>
+const signupSuccess = (lang: LangTypes, res: Response) =>
   res.status(status.CREATED).json({
     success: true,
     message:
       lang === "en" ? EN_MESSAGES.SIGNUP_SUCCESS : AR_MESSAGES.SIGNUP_SUCCESS,
   });
 
-const addedSuccess = (lang: string, res: Response) =>
+const addedSuccess = (lang: LangTypes, res: Response) =>
   res.status(status.CREATED).json({
     success: true,
     message:
       lang === "en" ? EN_MESSAGES.ADDED_SUCCESS : AR_MESSAGES.ADDED_SUCCESS,
   });
 
-const sendVerificationCodeSuccess = (lang: string, res: Response) =>
+const sendVerificationCodeSuccess = (lang: LangTypes, res: Response) =>
   res.status(status.CREATED).json({
     success: true,
     message:
@@ -62,7 +81,7 @@ const sendVerificationCodeSuccess = (lang: string, res: Response) =>
         : AR_MESSAGES.VERIFICATION_CODE_SENT,
   });
 
-const updatedSuccess = (lang: string, res: Response) =>
+const updatedSuccess = (lang: LangTypes, res: Response) =>
   res.status(status.OK).json({
     success: true,
     message:
@@ -70,7 +89,7 @@ const updatedSuccess = (lang: string, res: Response) =>
   });
 
 const loginSuccess = (
-  lang: string,
+  lang: LangTypes,
   res: Response,
   result: any,
   token: string
@@ -88,8 +107,17 @@ const getSuccess = (res: Response, results: any, count?: number) =>
     response: { results, count: count || 0 },
   });
 
+const operationSuccess = (lang: LangTypes, res: Response) =>
+  res.status(status.OK).json({
+    success: true,
+    message:
+      lang === "en"
+        ? EN_MESSAGES.OPERATION_SUCCESS
+        : AR_MESSAGES.OPERATION_SUCCESS,
+  });
+
 //500
-const somethingWentWrong = (lang: string, res: Response, error: Error) =>
+const somethingWentWrong = (lang: LangTypes, res: Response, error: Error) =>
   res.status(status.INTERNAL_SERVER).json({
     success: false,
     message:
@@ -112,4 +140,7 @@ export default {
   updatedSuccess,
   unauthorized,
   sendVerificationCodeSuccess,
+  verificationCodeWrong,
+  operationSuccess,
+  oldPasswordWrong,
 };

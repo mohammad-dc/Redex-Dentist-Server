@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { LangTypes } from "../@types/app.type";
 import { extractDataFromToken } from "../functions/jwt";
 import response from "../helpers/response";
 import notifications from "../models/notifications";
@@ -25,7 +26,7 @@ export class NotificationsService {
       ]);
       response.getSuccess(res, result[0], result[1]);
     } catch (error) {
-      response.somethingWentWrong(lang, res, error as Error);
+      response.somethingWentWrong(lang as LangTypes, res, error as Error);
     }
   }
 
@@ -46,7 +47,7 @@ export class NotificationsService {
         ? res.status(200).json({ success: true, response: { missing: true } })
         : res.status(200).json({ success: true, response: { missing: false } });
     } catch (error) {
-      response.somethingWentWrong(lang, res, error as Error);
+      response.somethingWentWrong(lang as LangTypes, res, error as Error);
     }
   }
 
@@ -64,9 +65,9 @@ export class NotificationsService {
         { _id: { $in: _ids }, receiver: { $in: [user_id] } },
         { $addToSet: { read_by: user_id } }
       );
-      response.updatedSuccess(lang, res);
+      response.updatedSuccess(lang as LangTypes, res);
     } catch (error) {
-      response.somethingWentWrong(lang, res, error as Error);
+      response.somethingWentWrong(lang as LangTypes, res, error as Error);
     }
   }
 }
