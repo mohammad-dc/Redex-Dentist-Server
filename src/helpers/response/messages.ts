@@ -1,5 +1,8 @@
 export const AR_MESSAGES = {
   VERIFICATION_CODE_SENT: "تم ارسال رمز اعادة تعين كلمة المرور",
+  VERIFICATION_CODE_WRONG: "رمز التفعيل خطأ",
+  OPERATION_SUCCESS: "تمت العملية بنجاح",
+  OLD_PASSWORD_WRONG: "كلمة المرور القديمة غير صحيحة",
   SIGNUP_SUCCESS: "تم انشاء الحساب بنجاح",
   LOGIN_SUCCESS: "تم تسجيل الدخول بنجاح",
   PHONE_WRONG: "رقم الهاتف خطأ",
@@ -13,6 +16,9 @@ export const AR_MESSAGES = {
 
 export const EN_MESSAGES = {
   VERIFICATION_CODE_SENT: "verification code to reset password sent",
+  VERIFICATION_CODE_WRONG: "verification code incorrect",
+  OPERATION_SUCCESS: "Operation success",
+  OLD_PASSWORD_WRONG: "Old password incorrect",
   SIGNUP_SUCCESS: "signup success",
   LOGIN_SUCCESS: "login success",
   PHONE_WRONG: "phone not correct",

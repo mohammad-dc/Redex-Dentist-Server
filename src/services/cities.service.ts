@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { LangTypes } from "../@types/app.type";
 import response from "../helpers/response";
 import body from "../helpers/response/body";
 import citiesModel from "../models/cities.model";
@@ -12,9 +13,9 @@ export class CitiesServices {
 
     try {
       await _cities.save();
-      response.addedSuccess(lang, res);
+      response.addedSuccess(lang as LangTypes, res);
     } catch (error) {
-      response.somethingWentWrong(lang, res, error as Error);
+      response.somethingWentWrong(lang as LangTypes, res, error as Error);
     }
   }
 
@@ -27,7 +28,7 @@ export class CitiesServices {
       });
       response.getSuccess(res, results, results.length);
     } catch (error) {
-      response.somethingWentWrong(lang, res, error as Error);
+      response.somethingWentWrong(lang as LangTypes, res, error as Error);
     }
   }
 }

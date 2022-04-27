@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
+import { LangTypes } from "../@types/app.type";
 import { usersRoles } from "../enums/auth.enum";
 import { comparePassword, hashPassword } from "../functions/bcryptPassword";
 import { extractDataFromToken, signJWT } from "../functions/jwt";
@@ -49,9 +50,9 @@ export class AuthServices {
     try {
       const _user = new usersModel(user);
       await _user.save();
-      response.signupSuccess(lang, res);
+      response.signupSuccess(lang as LangTypes, res);
     } catch (error) {
-      response.somethingWentWrong(lang, res, error as Error);
+      response.somethingWentWrong(lang as LangTypes, res, error as Error);
     }
   }
 
@@ -80,17 +81,22 @@ export class AuthServices {
           address: "$address",
         });
 
-      if (!result[0]) response.phoneWrong(lang, res);
+      if (!result[0]) response.phoneWrong(lang as LangTypes, res);
       else {
         const compare = await comparePassword(password, result[0].password);
         compare
           ? signJWT(result[0]._id, role, result[0].name, (error, token) => {
-              response.loginSuccess(lang, res, result[0], token || "");
+              response.loginSuccess(
+                lang as LangTypes,
+                res,
+                result[0],
+                token || ""
+              );
             })
-          : response.passwordWrong(lang, res);
+          : response.passwordWrong(lang as LangTypes, res);
       }
     } catch (error) {
-      response.somethingWentWrong(lang, res, error as Error);
+      response.somethingWentWrong(lang as LangTypes, res, error as Error);
     }
   }
 
@@ -120,12 +126,17 @@ export class AuthServices {
 
     try {
       !result[0]
-        ? response.accountNotExist(lang, res)
+        ? response.accountNotExist(lang as LangTypes, res)
         : signJWT(result[0]._id, role, result[0].name, (error, token) => {
-            response.loginSuccess(lang, res, result[0], token || "");
+            response.loginSuccess(
+              lang as LangTypes,
+              res,
+              result[0],
+              token || ""
+            );
           });
     } catch (error) {
-      response.somethingWentWrong(lang, res, error as Error);
+      response.somethingWentWrong(lang as LangTypes, res, error as Error);
     }
   }
 }
