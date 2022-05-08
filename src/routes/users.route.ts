@@ -5,6 +5,8 @@ export const usersRouter = Router({ mergeParams: true });
 
 const usersServices = new UsersServices();
 
+usersRouter.put("/worktime/update", usersServices.updateWorkTimeProfile);
+
 usersRouter.post("/verificationCode/send", usersServices.sendVerificationCode);
 
 usersRouter.post(

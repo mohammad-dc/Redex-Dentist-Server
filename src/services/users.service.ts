@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import { LangTypes } from "../@types/app.type";
 import { comparePassword, hashPassword } from "../functions/bcryptPassword";
+import { extractDataFromToken } from "../functions/jwt";
 import { sendSMS } from "../functions/twillio";
 import response from "../helpers/response";
 import usersModel from "../models/users.model";
@@ -12,6 +13,26 @@ export class UsersServices {
   async updateUserProfile(req: Request, res: Response, next: NextFunction) {}
 
   async updateImageProfile(req: Request, res: Response, next: NextFunction) {}
+
+  async updateWorkTimeProfile(req: Request, res: Response, next: NextFunction) {
+    const { lang } = req.params;
+    const { saturday, sunday, monday, tuesday, wednesday, thursday, friday } =
+      req.body;
+
+    const { user_id } = extractDataFromToken(req);
+
+    try {
+      const result = await usersModel.findByIdAndUpdate(
+        { _id: user_id },
+        { saturday, sunday, monday, tuesday, wednesday, thursday, friday }
+      );
+      result
+        ? response.updatedSuccess(lang as LangTypes, res)
+        : response.accountNotExist(lang as LangTypes, res);
+    } catch (error) {
+      response.somethingWentWrong(lang as LangTypes, res, error as Error);
+    }
+  }
 
   async searchDR(req: Request, res: Response, next: NextFunction) {
     const { lang } = req.params;
