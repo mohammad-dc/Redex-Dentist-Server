@@ -12,6 +12,10 @@ export const AR_MESSAGES = {
   ADDED_SUCCESS: "تمت الاضافة بنجاح",
   UPDATED_SUCCESS: "تم التعديل  بنجاح",
   UNAUTHORIZED: "العملية غير مصرح بها",
+  RESERVATION_NOT_AVAILABLE: "الحجز غير متاح",
+  RESERVATION_CANCELED: "تم الغاء الحجز",
+  RESERVATION_ACCEPTED: "تمت الموافقة على الحجز",
+  RESERVATION_REJECTED: "تم رفض الحجز",
 };
 
 export const EN_MESSAGES = {
@@ -28,4 +32,8 @@ export const EN_MESSAGES = {
   ADDED_SUCCESS: "added success",
   UPDATED_SUCCESS: "updated success",
   UNAUTHORIZED: "the credential not authorized ",
+  RESERVATION_NOT_AVAILABLE: "reservation not available",
+  RESERVATION_CANCELED: "reservation canceled",
+  RESERVATION_ACCEPTED: "reservation accepted",
+  RESERVATION_REJECTED: "reservation rejected",
 };

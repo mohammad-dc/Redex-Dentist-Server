@@ -57,6 +57,15 @@ const oldPasswordWrong = (lang: LangTypes, res: Response) =>
         : AR_MESSAGES.OLD_PASSWORD_WRONG,
   });
 
+const reservationNotAvailable = (lang: LangTypes, res: Response) =>
+  res.status(status.NOT_ACCEPTABLE).json({
+    success: true,
+    message:
+      lang === "en"
+        ? EN_MESSAGES.RESERVATION_NOT_AVAILABLE
+        : AR_MESSAGES.RESERVATION_NOT_AVAILABLE,
+  });
+
 //200
 const signupSuccess = (lang: LangTypes, res: Response) =>
   res.status(status.CREATED).json({
@@ -116,6 +125,33 @@ const operationSuccess = (lang: LangTypes, res: Response) =>
         : AR_MESSAGES.OPERATION_SUCCESS,
   });
 
+const reservationCanceled = (lang: LangTypes, res: Response) =>
+  res.status(status.OK).json({
+    success: true,
+    message:
+      lang === "en"
+        ? EN_MESSAGES.RESERVATION_CANCELED
+        : AR_MESSAGES.RESERVATION_CANCELED,
+  });
+
+const reservationRejected = (lang: LangTypes, res: Response) =>
+  res.status(status.OK).json({
+    success: true,
+    message:
+      lang === "en"
+        ? EN_MESSAGES.RESERVATION_REJECTED
+        : AR_MESSAGES.RESERVATION_REJECTED,
+  });
+
+const reservationAccepted = (lang: LangTypes, res: Response) =>
+  res.status(status.OK).json({
+    success: true,
+    message:
+      lang === "en"
+        ? EN_MESSAGES.RESERVATION_ACCEPTED
+        : AR_MESSAGES.RESERVATION_ACCEPTED,
+  });
+
 //500
 const somethingWentWrong = (lang: LangTypes, res: Response, error: Error) =>
   res.status(status.INTERNAL_SERVER).json({
@@ -143,4 +179,8 @@ export default {
   verificationCodeWrong,
   operationSuccess,
   oldPasswordWrong,
+  reservationNotAvailable,
+  reservationCanceled,
+  reservationRejected,
+  reservationAccepted,
 };

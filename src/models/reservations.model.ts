@@ -3,9 +3,11 @@ import mongoose from "mongoose";
 const ReservationsSchema = new mongoose.Schema(
   {
     accepted: { type: Boolean, default: false },
+    status: { type: String, default: "none" },
+    created_by: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
     patient: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
-    dr: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
-    time: { type: Date, required: true },
+    doctor: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
+    date: { type: Date, required: true },
     note: { type: String },
     done: { type: Boolean, default: false },
   },
