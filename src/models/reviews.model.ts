@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const ReviewsSchema = new mongoose.Schema(
   {
     reservation: { type: mongoose.Schema.Types.ObjectId, ref: "Reservations" },
-    starts: { type: Number, default: 0 },
+    rate: { type: Number, default: 0 },
     note: { type: String },
   },
   { timestamps: true }

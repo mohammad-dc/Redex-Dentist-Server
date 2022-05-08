@@ -6,3 +6,10 @@ export const usersRouter = Router({ mergeParams: true });
 const usersServices = new UsersServices();
 
 usersRouter.post("/verificationCode/send", usersServices.sendVerificationCode);
+
+usersRouter.post(
+  "/verificationCode/check",
+  usersServices.checkVerificationCode
+);
+
+usersRouter.post("/password/reset", usersServices.resetPassword);
