@@ -6,7 +6,10 @@ import { comparePassword, hashPassword } from "../functions/bcryptPassword";
 import { extractDataFromToken, signJWT } from "../functions/jwt";
 import response from "../helpers/response";
 import body from "../helpers/response/body";
-import { IDrRegister, IPatientRegister } from "../interfaces/auth.interface";
+import {
+  IDoctorRegister,
+  IPatientRegister,
+} from "../interfaces/auth.interface";
 import usersModel from "../models/users.model";
 
 export class AuthServices {
@@ -24,9 +27,9 @@ export class AuthServices {
 
     const hash_password = await hashPassword(password);
 
-    let user: IDrRegister | IPatientRegister | {} = {};
+    let user: IDoctorRegister | IPatientRegister | {} = {};
 
-    if (role === usersRoles.DR) {
+    if (role === usersRoles.DOCTOR) {
       user = {
         name,
         phone,
@@ -34,7 +37,7 @@ export class AuthServices {
         city,
         address,
         clinic_name,
-        role: role as usersRoles.DR,
+        role: role as usersRoles.DOCTOR,
       };
     } else if (role === usersRoles.PATIENT) {
       user = {

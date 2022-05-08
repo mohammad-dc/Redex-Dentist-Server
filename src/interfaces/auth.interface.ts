@@ -1,13 +1,13 @@
 import { usersRoles } from "../enums/auth.enum";
 
-export interface IDrRegister {
+export interface IDoctorRegister {
   name: string;
   phone: string;
   password: string;
   city: string;
   address: string;
   clinic_name: string;
-  role: usersRoles.DR;
+  role: usersRoles.DOCTOR;
 }
 
 export interface IPatientRegister {

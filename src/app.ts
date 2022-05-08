@@ -15,6 +15,7 @@ import { authRouter } from "./routes/auth.route";
 import { citiesRouter } from "./routes/cities.route";
 import { notificationsRouter } from "./routes/notifications.route";
 import { usersRouter } from "./routes/users.route";
+import { reservationsRouter } from "./routes/reservations.route";
 
 //connect MongoDB
 mongoose.connect(config.mongo.url, config.mongo.options);
@@ -56,6 +57,7 @@ app.use("/api/v1/:lang/auth/", authRouter);
 app.use("/api/v1/:lang/users/", usersRouter);
 app.use("/api/v1/:lang/cities/", citiesRouter);
 app.use("/api/v1/notifications/", notificationsRouter);
+app.use("/api/v1/:lang/reservations/", reservationsRouter);
 
 try {
   app.listen(config.server.port, () =>
