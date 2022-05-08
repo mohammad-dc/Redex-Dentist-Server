@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { LangTypes } from "../@types/app.type";
 import config from "../config/config.config";
 import response from "../helpers/response";
 
@@ -14,13 +15,13 @@ export const checkAccessTokenValidation = (
   if (token) {
     jwt.verify(token, config.jwt.user.secret || "", (error, decoded) => {
       if (error) {
-        response.unauthorized(lang, res);
+        response.unauthorized(lang as LangTypes, res);
       } else {
         res.locals.jwt = decoded;
         next();
       }
     });
   } else {
-    response.unauthorized(lang, res);
+    response.unauthorized(lang as LangTypes, res);
   }
 };

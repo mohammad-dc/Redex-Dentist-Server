@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import mongoose from "mongoose";
 import { LangTypes } from "../@types/app.type";
 import { comparePassword, hashPassword } from "../functions/bcryptPassword";
 import { sendSMS } from "../functions/twillio";
@@ -12,7 +13,55 @@ export class UsersServices {
 
   async updateImageProfile(req: Request, res: Response, next: NextFunction) {}
 
-  async searchDR(req: Request, res: Response, next: NextFunction) {}
+  async searchDR(req: Request, res: Response, next: NextFunction) {
+    const { lang } = req.params;
+    const { skip } = req.query;
+    const { name, rate, city } = req.body;
+
+    const ObjectId = mongoose.Types.ObjectId;
+
+    try {
+      const result = await usersModel
+        .aggregate([])
+        .match({
+          role: "dr",
+          city: city ? new ObjectId(city) : { $ne: null },
+          name: name ? { $regex: name, $options: "i" } : { $ne: null },
+        })
+        .lookup({
+          as: "review",
+          localField: "reservation",
+          from: "reviews",
+          foreignField: "_id",
+        })
+        .unwind("review")
+        .lookup({
+          as: "reservation",
+          localField: "$review.reservation",
+          from: "reservations",
+          foreignField: "_id",
+        })
+        .unwind("reservation")
+        .lookup({
+          as: "dr",
+          localField: "$reservation.dr",
+          from: "users",
+          foreignField: "_id",
+        })
+        .unwind("dr")
+        .group({
+          _id: "$reservation.dr",
+          count: { $sum: 1 },
+          rate: { $sum: "$rate" },
+        })
+        .skip(skip ? parseInt(skip as string) : 0)
+        .limit(20);
+
+      response.getSuccess(res, result);
+    } catch (error) {
+      response.somethingWentWrong(lang as LangTypes, res, error as Error);
+    }
+  }
 
   async sendVerificationCode(req: Request, res: Response, next: NextFunction) {
     const { lang } = req.params;
