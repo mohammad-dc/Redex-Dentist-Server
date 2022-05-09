@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@pusher/push-notifications-web": "^1.1.0",
-    "aws-sdk": "^2.1106.0",
+    "aws-sdk": "^2.1130.0",
     "bcrypt": "^5.0.1",
     "compression": "^1.7.4",
     "connect-mongodb-session": "^3.1.1",
@@ -28,7 +28,7 @@
     "multer": "^1.4.4",
     "pusher": "^5.0.1",
     "redis": "^4.0.6",
-    "sharp": "^0.30.3",
+    "sharp": "^0.30.4",
     "toobusy-js": "^0.5.1",
     "twilio": "^3.76.1",
     "uuid": "^8.3.2",
