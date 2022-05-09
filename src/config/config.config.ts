@@ -25,10 +25,10 @@ const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
 const TWILIO_SERVICE_SID = process.env.TWILIO_SERVICE_SID;
 
 //AWS
-// const AWS_PLATFORM_BUCKET_NAME = process.env.AWS_PLATFORM_BUCKET_NAME;
-// const AWS_PLATFORM_BUCKET_REGION = process.env.AWS_PLATFORM_BUCKET_REGION;
-// const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
-// const AWS_SECRET_KEY = process.env.AWS_SECRET_KEY;
+const AWS_PLATFORM_BUCKET_NAME = process.env.AWS_PLATFORM_BUCKET_NAME;
+const AWS_PLATFORM_BUCKET_REGION = process.env.AWS_PLATFORM_BUCKET_REGION;
+const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
+const AWS_SECRET_KEY = process.env.AWS_SECRET_KEY;
 
 //mongo connection info
 const MONGO_USERNAME = process.env.MONGO_USERNAME;
@@ -49,14 +49,14 @@ const JWT_ISSUER = process.env.JWT_ISSUER;
 // const PUSHER_SECRET = process.env.PUSHER_SECRET;
 // const PUSHER_CLUSTER = process.env.PUSHER_CLUSTER;
 
-// const AWS = {
-//   bucket: {
-//     name: AWS_PLATFORM_BUCKET_NAME,
-//     region: AWS_PLATFORM_BUCKET_REGION,
-//     access_key: AWS_ACCESS_KEY,
-//     secret_key: AWS_SECRET_KEY,
-//   },
-// };
+const AWS = {
+  bucket: {
+    name: AWS_PLATFORM_BUCKET_NAME,
+    region: AWS_PLATFORM_BUCKET_REGION,
+    access_key: AWS_ACCESS_KEY,
+    secret_key: AWS_SECRET_KEY,
+  },
+};
 
 const MONGO = {
   host: MONGO_HOST,
@@ -101,7 +101,7 @@ const config = {
   jwt: JWT,
   twilio: TWILIO,
   //   pusher: PUSHER,
-  //   aws: AWS,
+  aws: AWS,
 };
 
 export default config;

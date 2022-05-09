@@ -82,6 +82,7 @@ export class AuthServices {
           image_url: "$image_url",
           city: lang === "ar" ? "$city.city_ar" : "$city.city_en",
           address: "$address",
+          password: "$password",
         });
 
       if (!result[0]) response.phoneWrong(lang as LangTypes, res);

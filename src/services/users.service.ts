@@ -2,17 +2,45 @@ import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import { LangTypes } from "../@types/app.type";
 import { comparePassword, hashPassword } from "../functions/bcryptPassword";
+import { imageUploadProcess } from "../functions/imageUploadProcess";
 import { extractDataFromToken } from "../functions/jwt";
 import { sendSMS } from "../functions/twillio";
 import response from "../helpers/response";
 import usersModel from "../models/users.model";
+import { deleteFileFromS3 } from "../utils/aws/s3";
 
 export class UsersServices {
   async getUserProfile(req: Request, res: Response, next: NextFunction) {}
 
   async updateUserProfile(req: Request, res: Response, next: NextFunction) {}
 
-  async updateImageProfile(req: Request, res: Response, next: NextFunction) {}
+  async updateImageProfile(req: Request, res: Response, next: NextFunction) {
+    const { lang } = req.params;
+
+    try {
+      const { user_id } = extractDataFromToken(req);
+      const file = req.file as any;
+
+      const image_url = await imageUploadProcess(file);
+
+      const result = await usersModel.findByIdAndUpdate(
+        { _id: user_id },
+        { image_url }
+      );
+
+      if (result) {
+        result.image_url &&
+          (await deleteFileFromS3(
+            result.image_url.substring(result.image_url.lastIndexOf("/") + 1)
+          ));
+        response.updatedSuccess(lang as LangTypes, res);
+      } else {
+        response.accountNotExist(lang as LangTypes, res);
+      }
+    } catch (error) {
+      response.somethingWentWrong(lang as LangTypes, res, error as Error);
+    }
+  }
 
   async updateWorkTimeProfile(req: Request, res: Response, next: NextFunction) {
     const { lang } = req.params;
