@@ -12,20 +12,20 @@ const validationError = (res: Response, error: Error) =>
 
 const phoneWrong = (lang: LangTypes, res: Response) =>
   res.status(status.BAD_REQUEST).json({
-    success: true,
+    success: false,
     message: lang === "en" ? EN_MESSAGES.PHONE_WRONG : AR_MESSAGES.PHONE_WRONG,
   });
 
 const passwordWrong = (lang: LangTypes, res: Response) =>
   res.status(status.BAD_REQUEST).json({
-    success: true,
+    success: false,
     message:
       lang === "en" ? EN_MESSAGES.PASSWORD_WRONG : AR_MESSAGES.PASSWORD_WRONG,
   });
 
 const accountNotExist = (lang: LangTypes, res: Response) =>
   res.status(status.NOT_FOUND).json({
-    success: true,
+    success: false,
     message:
       lang === "en"
         ? EN_MESSAGES.ACCOUNT_NOT_EXIST
@@ -34,14 +34,14 @@ const accountNotExist = (lang: LangTypes, res: Response) =>
 
 const unauthorized = (lang: LangTypes, res: Response) =>
   res.status(status.UNAUTHORIZED).json({
-    success: true,
+    success: false,
     message:
       lang === "en" ? EN_MESSAGES.UNAUTHORIZED : AR_MESSAGES.UNAUTHORIZED,
   });
 
 const verificationCodeWrong = (lang: LangTypes, res: Response) =>
   res.status(status.BAD_REQUEST).json({
-    success: true,
+    success: false,
     message:
       lang === "en"
         ? EN_MESSAGES.VERIFICATION_CODE_WRONG
@@ -50,7 +50,7 @@ const verificationCodeWrong = (lang: LangTypes, res: Response) =>
 
 const oldPasswordWrong = (lang: LangTypes, res: Response) =>
   res.status(status.BAD_REQUEST).json({
-    success: true,
+    success: false,
     message:
       lang === "en"
         ? EN_MESSAGES.OLD_PASSWORD_WRONG
@@ -59,11 +59,18 @@ const oldPasswordWrong = (lang: LangTypes, res: Response) =>
 
 const reservationNotAvailable = (lang: LangTypes, res: Response) =>
   res.status(status.NOT_ACCEPTABLE).json({
-    success: true,
+    success: false,
     message:
       lang === "en"
         ? EN_MESSAGES.RESERVATION_NOT_AVAILABLE
         : AR_MESSAGES.RESERVATION_NOT_AVAILABLE,
+  });
+
+const itemNotExist = (lang: LangTypes, res: Response) =>
+  res.status(status.NOT_ACCEPTABLE).json({
+    success: false,
+    message:
+      lang === "en" ? EN_MESSAGES.ITEM_NOT_EXIST : AR_MESSAGES.ITEM_NOT_EXIST,
   });
 
 //200
@@ -183,4 +190,5 @@ export default {
   reservationCanceled,
   reservationRejected,
   reservationAccepted,
+  itemNotExist,
 };
