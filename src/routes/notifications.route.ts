@@ -6,7 +6,7 @@ export const notificationsRouter = Router();
 const notificationsService = new NotificationsService();
 
 notificationsRouter.get(
-  "/get",
+  "/",
   checkAccessTokenValidation,
   notificationsService.getAllUserNotifications
 );

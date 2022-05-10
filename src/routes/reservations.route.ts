@@ -12,7 +12,7 @@ reservationsRouter.post(
   reservationsService.addReservation
 );
 
-reservationsRouter.post(
+reservationsRouter.put(
   "/:role/update/:_id",
   checkAccessTokenValidation,
   reservationsService.updateReservation
@@ -36,7 +36,7 @@ reservationsRouter.post(
   reservationsService.rejectReservation
 );
 
-reservationsRouter.post(
+reservationsRouter.get(
   "/:role/:type",
   checkAccessTokenValidation,
   reservationsService.getAllReservations

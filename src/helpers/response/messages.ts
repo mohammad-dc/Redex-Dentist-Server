@@ -16,6 +16,7 @@ export const AR_MESSAGES = {
   RESERVATION_CANCELED: "تم الغاء الحجز",
   RESERVATION_ACCEPTED: "تمت الموافقة على الحجز",
   RESERVATION_REJECTED: "تم رفض الحجز",
+  ITEM_NOT_EXIST: "العنصر غير متوفر",
 };
 
 export const EN_MESSAGES = {
@@ -36,4 +37,5 @@ export const EN_MESSAGES = {
   RESERVATION_CANCELED: "reservation canceled",
   RESERVATION_ACCEPTED: "reservation accepted",
   RESERVATION_REJECTED: "reservation rejected",
+  ITEM_NOT_EXIST: "item not exist",
 };
