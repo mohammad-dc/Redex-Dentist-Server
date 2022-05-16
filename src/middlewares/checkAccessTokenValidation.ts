@@ -25,3 +25,24 @@ export const checkAccessTokenValidation = (
     response.unauthorized(lang as LangTypes, res);
   }
 };
+
+export const checkAdminAccessTokenValidation = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const token = req.headers.authorization?.split(" ")[1];
+
+  if (token) {
+    jwt.verify(token, config.jwt.admin.secret || "", (error, decoded) => {
+      if (error) {
+        response.unauthorized("ar", res);
+      } else {
+        res.locals.jwt = decoded;
+        next();
+      }
+    });
+  } else {
+    response.unauthorized("ar", res);
+  }
+};

@@ -18,6 +18,7 @@ import { usersRouter } from "./routes/users.route";
 import { reservationsRouter } from "./routes/reservations.route";
 import { reportReasonsRouter } from "./routes/reportReasons.route";
 import { reportsRouter } from "./routes/reports.route";
+import { adminRouter } from "./routes/admin.route";
 
 //connect MongoDB
 mongoose.connect(config.mongo.url, config.mongo.options);
@@ -55,6 +56,7 @@ app.use(
 );
 
 //routes
+app.use("/api/v1/admin/", adminRouter);
 app.use("/api/v1/:lang/auth/", authRouter);
 app.use("/api/v1/:lang/users/", usersRouter);
 app.use("/api/v1/:lang/cities/", citiesRouter);

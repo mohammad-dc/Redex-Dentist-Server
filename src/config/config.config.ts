@@ -38,6 +38,8 @@ const MONGO_HOST = process.env.MONGO_HOST;
 // jwt
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_ISSUER = process.env.JWT_ISSUER;
+const JWT_ADMIN_SECRET = process.env.JWT_ADMIN_SECRET;
+const JWT_ADMIN_ISSUER = process.env.JWT_ADMIN_ISSUER;
 
 //jwt admin
 // const JWT_SECRET_ADMIN = process.env.JWT_SECRET_ADMIN;
@@ -89,10 +91,10 @@ const JWT = {
     secret: JWT_SECRET,
     issuer: JWT_ISSUER,
   },
-  // admin: {
-  //   secret: JWT_SECRET_ADMIN,
-  //   issuer: JWT_ISSUER_ADMIN,
-  // }
+  admin: {
+    secret: JWT_ADMIN_SECRET,
+    issuer: JWT_ADMIN_ISSUER,
+  },
 };
 
 const config = {

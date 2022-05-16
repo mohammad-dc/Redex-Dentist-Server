@@ -73,6 +73,13 @@ const itemNotExist = (lang: LangTypes, res: Response) =>
       lang === "en" ? EN_MESSAGES.ITEM_NOT_EXIST : AR_MESSAGES.ITEM_NOT_EXIST,
   });
 
+const emailNotExist = (lang: LangTypes, res: Response) =>
+  res.status(status.NOT_ACCEPTABLE).json({
+    success: false,
+    message:
+      lang === "en" ? EN_MESSAGES.EMAIL_NOT_EXIST : AR_MESSAGES.EMAIL_NOT_EXIST,
+  });
+
 //200
 const signupSuccess = (lang: LangTypes, res: Response) =>
   res.status(status.CREATED).json({
@@ -191,4 +198,5 @@ export default {
   reservationRejected,
   reservationAccepted,
   itemNotExist,
+  emailNotExist,
 };
