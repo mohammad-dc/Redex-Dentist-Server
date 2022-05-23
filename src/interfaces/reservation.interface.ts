@@ -1,3 +1,5 @@
+import { ReservationsStatusType } from "../@types/reservations.type";
+
 export interface ISaveReservation {
   date: Date;
   created_by: string;
@@ -16,5 +18,5 @@ export interface IUpdateReservation {
 export interface IReservationMatchFilter {
   patient?: string;
   doctor?: string;
-  accepted?: boolean;
+  status?: ReservationsStatusType;
 }

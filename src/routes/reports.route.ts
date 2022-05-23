@@ -6,4 +6,8 @@ export const reportsRouter = Router({ mergeParams: true });
 
 const reportService = new ReportService();
 
+//users
 reportsRouter.post("/add", checkAccessTokenValidation, reportService.addReport);
+
+//admin
+reportsRouter.get("/admin/:type", reportService.getAllReports);

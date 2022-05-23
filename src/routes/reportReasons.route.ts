@@ -5,8 +5,12 @@ export const reportReasonsRouter = Router({ mergeParams: true });
 
 const reportReasonsService = new ReportReasonsService();
 
+//users
+reportReasonsRouter.get("/", reportReasonsService.getAllReasons);
+
+// admin
 reportReasonsRouter.post("/add", reportReasonsService.addReason);
 
 reportReasonsRouter.put("/update/:_id", reportReasonsService.updateReason);
 
-reportReasonsRouter.get("/", reportReasonsService.getAllReasons);
+reportReasonsRouter.get("/admin", reportReasonsService.getAllReasonsDetails);

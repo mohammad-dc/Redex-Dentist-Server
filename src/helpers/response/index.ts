@@ -130,6 +130,12 @@ const getSuccess = (res: Response, results: any, count?: number) =>
     response: { results, count: count || 0 },
   });
 
+const retrieveSuccess = (res: Response, result: any) =>
+  res.status(status.OK).json({
+    success: true,
+    response: { result },
+  });
+
 const operationSuccess = (lang: LangTypes, res: Response) =>
   res.status(status.OK).json({
     success: true,
@@ -187,6 +193,7 @@ export default {
   accountNotExist,
   addedSuccess,
   getSuccess,
+  retrieveSuccess,
   updatedSuccess,
   unauthorized,
   sendVerificationCodeSuccess,

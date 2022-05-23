@@ -25,6 +25,8 @@ const UsersSchema = new mongoose.Schema(
     },
     image_url: {
       type: String,
+      default:
+        "https://redex-dentel-profiles-production.s3.eu-central-1.amazonaws.com/user_default.png",
     },
     bio: {
       type: String,

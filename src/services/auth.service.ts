@@ -21,8 +21,7 @@ export class AuthServices {
 
   //register dr or patient
   async register(req: Request, res: Response, next: NextFunction) {
-    const { lang } = req.params;
-    const { role } = req.params;
+    const { lang, role } = req.params;
     const { name, phone, password, city, address, clinic_name } = req.body;
 
     const hash_password = await hashPassword(password);

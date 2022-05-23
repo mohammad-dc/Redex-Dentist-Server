@@ -7,7 +7,7 @@ export const registerSchema = yup.object().shape({
   password: yup.string().required(messages.requiredField("password")),
   city: yup.string().required(messages.requiredField("city")),
   address: yup.string(),
-  clinic_name: yup.string().required(messages.requiredField("clinic_name")),
+  // clinic_name: yup.string().required(messages.requiredField("clinic_name")),
 });
 
 export const loginSchema = yup.object().shape({

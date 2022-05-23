@@ -4,6 +4,22 @@ import response from "../helpers/response";
 import reportsReasonsModel from "../models/reportsReasons.model";
 
 export class ReportReasonsService {
+  //users
+  async getAllReasons(req: Request, res: Response, next: NextFunction) {
+    const { lang } = req.params;
+    try {
+      const result = await reportsReasonsModel.aggregate([]).project({
+        _id: "$_id",
+        reason: lang === "ar" ? "$reason_ar" : "$reason_en",
+      });
+
+      response.getSuccess(res, result);
+    } catch (error) {
+      response.somethingWentWrong(lang as LangTypes, res, error as Error);
+    }
+  }
+
+  //admin
   async addReason(req: Request, res: Response, next: NextFunction) {
     const { lang } = req.params;
     const { reason_ar, reason_en } = req.body;
@@ -33,17 +49,29 @@ export class ReportReasonsService {
     }
   }
 
-  async getAllReasons(req: Request, res: Response, next: NextFunction) {
-    const { lang } = req.params;
-    try {
-      const result = await reportsReasonsModel.aggregate([]).project({
-        _id: "$_id",
-        reason: lang === "ar" ? "$reason_ar" : "$reason_en",
-      });
+  async getAllReasonsDetails(req: Request, res: Response, next: NextFunction) {
+    const { skip } = req.query;
 
-      response.getSuccess(res, result);
+    try {
+      const results = await reportsReasonsModel
+        .aggregate([])
+        .lookup({
+          as: "reports",
+          from: "reports",
+          localField: "_id",
+          foreignField: "reason",
+        })
+        .project({
+          _id: 1,
+          reason_ar: 1,
+          reason_en: 1,
+          reports_count: { $size: "$reports" },
+        })
+        .skip(skip ? parseInt(skip as string) : 0)
+        .limit(20);
+      response.getSuccess(res, results);
     } catch (error) {
-      response.somethingWentWrong(lang as LangTypes, res, error as Error);
+      response.somethingWentWrong("ar", res, error as Error);
     }
   }
 }

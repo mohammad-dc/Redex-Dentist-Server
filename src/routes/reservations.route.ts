@@ -6,6 +6,7 @@ export const reservationsRouter = Router({ mergeParams: true });
 
 const reservationsService = new ReservationsService();
 
+//users
 reservationsRouter.post(
   "/:role/add",
   checkAccessTokenValidation,
@@ -37,7 +38,15 @@ reservationsRouter.post(
 );
 
 reservationsRouter.get(
-  "/:role/:type",
+  "/:role/:status/all",
   checkAccessTokenValidation,
-  reservationsService.getAllReservations
+  reservationsService.getAllUserReservations
 );
+
+//admin
+reservationsRouter.get(
+  "/admin/count",
+  reservationsService.getReservationsCount
+);
+
+reservationsRouter.get("/admin/all", reservationsService.getAllReservations);

@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 
 const ReviewsSchema = new mongoose.Schema(
   {
-    reservation: { type: mongoose.Schema.Types.ObjectId, ref: "Reservations" },
+    doctor: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
+    patient: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
     rate: { type: Number, default: 0 },
     note: { type: String },
   },

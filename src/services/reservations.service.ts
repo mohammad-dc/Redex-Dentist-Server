@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { LangTypes } from "../@types/app.type";
+import { ReservationsStatusType } from "../@types/reservations.type";
 import { extractDataFromToken } from "../functions/jwt";
 import response from "../helpers/response";
 import {
@@ -10,6 +11,7 @@ import {
 import reservationsModel from "../models/reservations.model";
 
 export class ReservationsService {
+  //users
   async addReservation(req: Request, res: Response, next: NextFunction) {
     const { lang, role } = req.params;
     const { date, user } = req.body;
@@ -135,8 +137,12 @@ export class ReservationsService {
     }
   }
 
-  async getAllReservations(req: Request, res: Response, next: NextFunction) {
-    const { lang, role, type } = req.params;
+  async getAllUserReservations(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    const { lang, role, status } = req.params;
     const { skip } = req.query;
 
     try {
@@ -151,13 +157,9 @@ export class ReservationsService {
         filter.patient = user_id;
       }
 
-      if (type === "accepted") {
-        filter.accepted = true;
+      if (status) {
+        filter.status = status as ReservationsStatusType;
       }
-      if (type === "rejected") {
-        filter.accepted = false;
-      }
-
       const result = await reservationsModel
         .aggregate([])
         .match(filter)
@@ -202,6 +204,100 @@ export class ReservationsService {
       response.getSuccess(res, result);
     } catch (error) {
       response.somethingWentWrong(lang as LangTypes, res, error as Error);
+    }
+  }
+
+  //admin
+  async getReservationsCount(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await reservationsModel.count();
+      response.retrieveSuccess(res, result);
+    } catch (error) {
+      response.somethingWentWrong("ar", res, error as Error);
+    }
+  }
+
+  async getAllReservations(req: Request, res: Response, next: NextFunction) {
+    const { search, day, month, year, status, skip } = req.query;
+
+    try {
+      const results = await reservationsModel
+        .aggregate([])
+        .lookup({
+          as: "patient",
+          from: "users",
+          localField: "patient",
+          foreignField: "_id",
+        })
+        .unwind("patient")
+        .lookup({
+          as: "doctor",
+          from: "users",
+          localField: "doctor",
+          foreignField: "_id",
+        })
+        .unwind("doctor")
+        .project({
+          _id: 1,
+          status: 1,
+          doctor: 1,
+          patient: 1,
+          date: 1,
+          month: { $month: "$date" },
+          day: { $dayOfMonth: "$date" },
+          year: { $year: "$date" },
+        })
+        .match({
+          $or: [
+            {
+              "$doctor.name": search
+                ? { $regex: search, $options: "i" }
+                : { $ne: null },
+            },
+            {
+              "$doctor.phone": search
+                ? { $regex: search, $options: "i" }
+                : { $ne: null },
+            },
+            {
+              "$patient.name": search
+                ? { $regex: search, $options: "i" }
+                : { $ne: null },
+            },
+            {
+              "$patient.phone": search
+                ? { $regex: search, $options: "i" }
+                : { $ne: null },
+            },
+          ],
+          day: day ? day : { $ne: -1 },
+          month: month ? month : { $ne: -1 },
+          year: year ? year : { $ne: -1 },
+          status: status ? status : { $ne: null },
+        })
+        .project({
+          _id: "$_id",
+          status: "$status",
+          doctor: {
+            _id: "$doctor._id",
+            image_url: "$doctor.image_url",
+            name: "$doctor.name",
+          },
+          patient: {
+            _id: "$patient._id",
+            image_url: "$patient.image_url",
+            name: "$patient.name",
+          },
+          date: "$date",
+          month: "$month",
+          day: "$day",
+          year: "$year",
+        })
+        .skip(skip ? parseInt(skip as string) : 0)
+        .limit(20);
+      response.getSuccess(res, results);
+    } catch (error) {
+      response.somethingWentWrong("ar", res, error as Error);
     }
   }
 }

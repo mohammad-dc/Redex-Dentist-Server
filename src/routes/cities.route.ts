@@ -7,6 +7,7 @@ import { citiesSchema } from "../validations/cities.validation";
 export const citiesRouter = Router({ mergeParams: true });
 const citiesService = new CitiesServices();
 
+//users
 citiesRouter.post(
   "/add",
   checkRequestValidation(citiesSchema),
@@ -14,3 +15,6 @@ citiesRouter.post(
 );
 
 citiesRouter.get("/", citiesService.getCities);
+
+//admin
+citiesRouter.get("/admin/details", citiesService.getCitiesDetails);
