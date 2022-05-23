@@ -410,7 +410,7 @@ export class UsersServices {
           image_url: "$image_url",
           name: "$name",
           phone: "$phone",
-          city: "$city.city_ar",
+          city: "$city",
           address: "$address",
           reports: "$reports",
           total_reservations_count: "$total_reservations",
@@ -423,6 +423,7 @@ export class UsersServices {
       response.somethingWentWrong("ar", res, error as Error);
     }
   }
+
   async adminGetCountOfUsers(req: Request, res: Response, next: NextFunction) {
     try {
       const results = await usersModel.aggregate([]).group({

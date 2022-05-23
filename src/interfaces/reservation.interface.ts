@@ -5,14 +5,14 @@ export interface ISaveReservation {
   created_by: string;
   patient?: string;
   doctor?: string;
-  accepted?: boolean;
+  status?: ReservationsStatusType;
 }
 
 export interface IUpdateReservation {
   date: Date;
   patient?: string;
   doctor?: string;
-  accepted?: boolean;
+  status?: ReservationsStatusType;
 }
 
 export interface IReservationMatchFilter {

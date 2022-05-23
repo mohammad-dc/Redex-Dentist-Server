@@ -69,34 +69,35 @@ export class ReportService {
         .match({
           $or: [
             {
-              "$doctor.name": search
+              "doctor.name": search
                 ? { $regex: search, $options: "i" }
                 : { $ne: null },
             },
             {
-              "$doctor.phone": search
+              "doctor.phone": search
                 ? { $regex: search, $options: "i" }
                 : { $ne: null },
             },
             {
-              "$patient.name": search
+              "patient.name": search
                 ? { $regex: search, $options: "i" }
                 : { $ne: null },
             },
             {
-              "$patient.phone": search
+              "patient.phone": search
                 ? { $regex: search, $options: "i" }
                 : { $ne: null },
             },
           ],
-          "$reason._id": new ObjectId(reason as string),
+          "reason._id": new ObjectId(reason as string),
           day: type === "recent" ? "$day" : { $ne: -1 },
           month: type === "recent" ? "$month" : { $ne: -1 },
           year: type === "recent" ? "$year" : { $ne: -1 },
         })
         .project({
           _id: "$_id",
-          reason: "$reason.reason_ar",
+          reason_ar: "$reason.reason_ar",
+          reason_en: "$reason.reason_en",
           content: "$content",
           patient: {
             _id: "$patient._id",

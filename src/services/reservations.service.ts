@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { LangTypes } from "../@types/app.type";
 import { ReservationsStatusType } from "../@types/reservations.type";
+import { reservationStatus } from "../enums/auth.enum";
 import { extractDataFromToken } from "../functions/jwt";
 import response from "../helpers/response";
 import {
@@ -27,7 +28,7 @@ export class ReservationsService {
       if (role === "doctor") {
         reservation.patient = user;
         reservation.doctor = user_id;
-        reservation.accepted = true;
+        reservation.status = reservationStatus.APPROVED;
       }
 
       if (role === "patient") {
@@ -56,12 +57,11 @@ export class ReservationsService {
 
       if (role === "doctor") {
         reservation.patient = user;
-        reservation.accepted = true;
+        reservation.status = reservationStatus.APPROVED;
       }
 
       if (role === "patient") {
         reservation.doctor = user;
-        reservation.accepted = false;
       }
 
       const result = await reservationsModel.findOneAndUpdate(
@@ -250,22 +250,22 @@ export class ReservationsService {
         .match({
           $or: [
             {
-              "$doctor.name": search
+              "doctor.name": search
                 ? { $regex: search, $options: "i" }
                 : { $ne: null },
             },
             {
-              "$doctor.phone": search
+              "doctor.phone": search
                 ? { $regex: search, $options: "i" }
                 : { $ne: null },
             },
             {
-              "$patient.name": search
+              "patient.name": search
                 ? { $regex: search, $options: "i" }
                 : { $ne: null },
             },
             {
-              "$patient.phone": search
+              "patient.phone": search
                 ? { $regex: search, $options: "i" }
                 : { $ne: null },
             },
