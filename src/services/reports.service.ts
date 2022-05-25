@@ -31,6 +31,7 @@ export class ReportService {
     const { search, reason, skip } = req.query;
 
     try {
+      const date = new Date();
       const ObjectId = mongoose.Types.ObjectId;
       const results = await reportsModel
         .aggregate([])
@@ -44,7 +45,7 @@ export class ReportService {
         .lookup({
           as: "patient",
           from: "users",
-          localField: "report_to",
+          localField: "report_from",
           foreignField: "_id",
         })
         .unwind("patient")
@@ -89,15 +90,14 @@ export class ReportService {
                 : { $ne: null },
             },
           ],
-          "reason._id": new ObjectId(reason as string),
-          day: type === "recent" ? "$day" : { $ne: -1 },
-          month: type === "recent" ? "$month" : { $ne: -1 },
-          year: type === "recent" ? "$year" : { $ne: -1 },
+          "reason._id": reason ? new ObjectId(reason as string) : { $ne: null },
+          day: type === "recent" ? date.getDate() : { $ne: -1 },
+          month: type === "recent" ? date.getMonth() + 1 : { $ne: -1 },
+          year: type === "recent" ? date.getFullYear() : { $ne: -1 },
         })
         .project({
           _id: "$_id",
-          reason_ar: "$reason.reason_ar",
-          reason_en: "$reason.reason_en",
+          reason: "$reason.reason_ar",
           content: "$content",
           patient: {
             _id: "$patient._id",
@@ -109,7 +109,9 @@ export class ReportService {
             image_url: "$doctor.image_url",
             name: "$doctor.name",
           },
-          createdAt: 1,
+          day: "$day",
+          month: "$month",
+          year: "$year",
         })
         .skip(skip ? parseInt(skip as string) : 0)
         .limit(20);
