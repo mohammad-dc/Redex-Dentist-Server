@@ -8,15 +8,15 @@ export const citiesRouter = Router({ mergeParams: true });
 const citiesService = new CitiesServices();
 
 //users
+citiesRouter.get("/", citiesService.getCities);
+
+//admin
 citiesRouter.post(
-  "/add",
+  "/admin/add",
   checkRequestValidation(citiesSchema),
   citiesService.addCity
 );
 
-citiesRouter.get("/", citiesService.getCities);
-
-//admin
 citiesRouter.get("/admin/details", citiesService.getCitiesDetails);
 
 citiesRouter.put("/admin/:action/:_id", citiesService.activationCity);

@@ -6,20 +6,6 @@ import citiesModel from "../models/cities.model";
 
 export class CitiesServices {
   //users
-  async addCity(req: Request, res: Response, next: NextFunction) {
-    const { lang } = req.params;
-    const { city_ar, city_en } = req.body;
-
-    const _city = new citiesModel({ city_ar, city_en });
-
-    try {
-      await _city.save();
-      response.addedSuccess(lang as LangTypes, res);
-    } catch (error) {
-      response.somethingWentWrong(lang as LangTypes, res, error as Error);
-    }
-  }
-
   async getCities(req: Request, res: Response, next: NextFunction) {
     const { lang } = req.params;
     try {
@@ -37,6 +23,19 @@ export class CitiesServices {
   }
 
   //admin
+  async addCity(req: Request, res: Response, next: NextFunction) {
+    const { city_ar, city_en } = req.body;
+
+    const _city = new citiesModel({ city_ar, city_en });
+
+    try {
+      await _city.save();
+      response.addedSuccess("ar", res);
+    } catch (error) {
+      response.somethingWentWrong("ar", res, error as Error);
+    }
+  }
+
   async getCitiesDetails(req: Request, res: Response, next: NextFunction) {
     try {
       const results = await citiesModel.aggregate([]).project({
