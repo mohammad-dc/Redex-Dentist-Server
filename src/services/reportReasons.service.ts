@@ -74,4 +74,17 @@ export class ReportReasonsService {
       response.somethingWentWrong("ar", res, error as Error);
     }
   }
+
+  async deleteReason(req: Request, res: Response, next: NextFunction) {
+    const { _id } = req.params;
+
+    try {
+      const result = await reportsReasonsModel.findByIdAndDelete({ _id });
+      result
+        ? response.deletedSuccess("ar", res)
+        : response.itemNotExist("ar", res);
+    } catch (error) {
+      response.somethingWentWrong("ar", res, error as Error);
+    }
+  }
 }

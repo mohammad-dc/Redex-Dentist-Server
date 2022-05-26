@@ -172,6 +172,13 @@ const reservationAccepted = (lang: LangTypes, res: Response) =>
         : AR_MESSAGES.RESERVATION_ACCEPTED,
   });
 
+const deletedSuccess = (lang: LangTypes, res: Response) =>
+  res.status(status.ACCEPTED).json({
+    success: true,
+    message:
+      lang === "en" ? EN_MESSAGES.DELETED_SUCCESS : AR_MESSAGES.DELETED_SUCCESS,
+  });
+
 //500
 const somethingWentWrong = (lang: LangTypes, res: Response, error: Error) =>
   res.status(status.INTERNAL_SERVER).json({
@@ -195,6 +202,7 @@ export default {
   getSuccess,
   retrieveSuccess,
   updatedSuccess,
+  deletedSuccess,
   unauthorized,
   sendVerificationCodeSuccess,
   verificationCodeWrong,

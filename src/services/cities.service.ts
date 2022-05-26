@@ -10,10 +10,10 @@ export class CitiesServices {
     const { lang } = req.params;
     const { city_ar, city_en } = req.body;
 
-    const _cities = new citiesModel({ city_ar, city_en });
+    const _city = new citiesModel({ city_ar, city_en });
 
     try {
-      await _cities.save();
+      await _city.save();
       response.addedSuccess(lang as LangTypes, res);
     } catch (error) {
       response.somethingWentWrong(lang as LangTypes, res, error as Error);
@@ -46,6 +46,22 @@ export class CitiesServices {
         active: "$active",
       });
       response.getSuccess(res, results, results.length);
+    } catch (error) {
+      response.somethingWentWrong("ar", res, error as Error);
+    }
+  }
+
+  async activationCity(req: Request, res: Response, next: NextFunction) {
+    const { _id, action } = req.params;
+
+    try {
+      const result = await citiesModel.findByIdAndUpdate(
+        { _id },
+        { active: action === "activate" ? true : false }
+      );
+      result
+        ? response.updatedSuccess("ar", res)
+        : response.itemNotExist("ar", res);
     } catch (error) {
       response.somethingWentWrong("ar", res, error as Error);
     }

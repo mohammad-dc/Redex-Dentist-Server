@@ -480,4 +480,17 @@ export class UsersServices {
       response.somethingWentWrong("ar", res, error as Error);
     }
   }
+
+  async deleteUser(req: Request, res: Response, next: NextFunction) {
+    const { role, _id } = req.params;
+
+    try {
+      const result = await usersModel.findOneAndDelete({ role, _id });
+      result
+        ? response.deletedSuccess("ar", res)
+        : response.accountNotExist("ar", res);
+    } catch (error) {
+      response.somethingWentWrong("ar", res, error as Error);
+    }
+  }
 }

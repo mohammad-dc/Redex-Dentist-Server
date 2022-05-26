@@ -73,3 +73,5 @@ usersRouter.get(
   "/admin/statistics/:role/cities",
   usersServices.usersCitiesStatistics
 );
+
+usersRouter.delete("/admin/:role/delete/:_id", usersServices.deleteUser);

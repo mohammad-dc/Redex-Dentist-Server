@@ -14,3 +14,8 @@ reportReasonsRouter.post("/add", reportReasonsService.addReason);
 reportReasonsRouter.put("/update/:_id", reportReasonsService.updateReason);
 
 reportReasonsRouter.get("/admin", reportReasonsService.getAllReasonsDetails);
+
+reportReasonsRouter.delete(
+  "/admin/delete/:_id",
+  reportReasonsService.deleteReason
+);
