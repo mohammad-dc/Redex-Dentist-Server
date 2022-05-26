@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { ReservationsStatusType } from "../@types/reservations.type";
 
 export interface ISaveReservation {
@@ -16,7 +17,7 @@ export interface IUpdateReservation {
 }
 
 export interface IReservationMatchFilter {
-  patient?: string;
-  doctor?: string;
+  patient?: mongoose.Types.ObjectId;
+  doctor?: mongoose.Types.ObjectId;
   status?: ReservationsStatusType;
 }

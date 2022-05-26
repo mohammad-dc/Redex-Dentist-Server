@@ -1995,10 +1995,10 @@ pupa@^2.1.1:
   dependencies:
     escape-goat "^2.0.0"
 
-pusher@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/pusher/-/pusher-5.0.1.tgz#b7d6aaa72e0b9b2517253f173f9d0fdfda29c3bb"
-  integrity sha512-1JK/xdjEdZQ7iJwbDWA0qBdPHGNvVSoUiNXA9O7j1BHYAqenSxyORgzxWQopnYFKjQhHIcCZ8RCKJtcepWHeKw==
+pusher@^5.1.0-beta:
+  version "5.1.0-beta"
+  resolved "https://registry.yarnpkg.com/pusher/-/pusher-5.1.0-beta.tgz#567395a4b94bc3051f5a9a0086935a23bd91d513"
+  integrity sha512-ujM7BHA77/sHdIuhAbRdWdnaY+KhSuGZg/1OVjKxiIqnTV8BgSL7+heBCtkRMF9pjvy9jElR8s0eCUlSfJ1FAg==
   dependencies:
     abort-controller "^3.0.0"
     is-base64 "^1.1.0"

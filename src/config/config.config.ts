@@ -45,11 +45,11 @@ const JWT_ADMIN_ISSUER = process.env.JWT_ADMIN_ISSUER;
 // const JWT_SECRET_ADMIN = process.env.JWT_SECRET_ADMIN;
 // const JWT_ISSUER_ADMIN = process.env.JWT_ISSUER_ADMIN;
 
-//Pusher
-// const PUSHER_APP_ID = process.env.PUSHER_APP_ID;
-// const PUSHER_KEY = process.env.PUSHER_KEY;
-// const PUSHER_SECRET = process.env.PUSHER_SECRET;
-// const PUSHER_CLUSTER = process.env.PUSHER_CLUSTER;
+// Pusher
+const PUSHER_APP_ID = process.env.PUSHER_APP_ID;
+const PUSHER_KEY = process.env.PUSHER_KEY;
+const PUSHER_SECRET = process.env.PUSHER_SECRET;
+const PUSHER_CLUSTER = process.env.PUSHER_CLUSTER;
 
 const AWS = {
   bucket: {
@@ -68,12 +68,12 @@ const MONGO = {
   url: `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOST}`,
 };
 
-// const PUSHER = {
-//   app_id: PUSHER_APP_ID,
-//   key: PUSHER_KEY,
-//   secret: PUSHER_SECRET,
-//   cluster: PUSHER_CLUSTER,
-// };
+const PUSHER = {
+  app_id: PUSHER_APP_ID,
+  key: PUSHER_KEY,
+  secret: PUSHER_SECRET,
+  cluster: PUSHER_CLUSTER,
+};
 
 const SERVER = {
   hostname: SERVER_HOSTNAME,
@@ -102,7 +102,7 @@ const config = {
   server: SERVER,
   jwt: JWT,
   twilio: TWILIO,
-  //   pusher: PUSHER,
+  pusher: PUSHER,
   aws: AWS,
 };
 

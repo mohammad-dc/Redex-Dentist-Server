@@ -2,7 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import { LangTypes } from "../@types/app.type";
 import response from "../helpers/response";
 import body from "../helpers/response/body";
+import { ICityResponse } from "../interfaces/cities.interface";
 import citiesModel from "../models/cities.model";
+import sockets from "../utils/socket/sockets";
 
 export class CitiesServices {
   //users
@@ -29,7 +31,9 @@ export class CitiesServices {
     const _city = new citiesModel({ city_ar, city_en });
 
     try {
-      await _city.save();
+      const { _id, city_ar, city_en, active } = await _city.save();
+      const data: ICityResponse = { _id, city_ar, city_en, active };
+      sockets.citiesSocket({ type: "add", data });
       response.addedSuccess("ar", res);
     } catch (error) {
       response.somethingWentWrong("ar", res, error as Error);

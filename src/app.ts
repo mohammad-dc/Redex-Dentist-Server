@@ -20,6 +20,7 @@ import { reportReasonsRouter } from "./routes/reportReasons.route";
 import { reportsRouter } from "./routes/reports.route";
 import { adminRouter } from "./routes/admin.route";
 import { chatRouter } from "./routes/chat.route";
+import { reviewsRouter } from "./routes/reviews.route";
 
 //connect MongoDB
 mongoose.connect(config.mongo.url, config.mongo.options);
@@ -61,6 +62,7 @@ app.use("/api/v1/admin/", adminRouter);
 app.use("/api/v1/:lang/auth/", authRouter);
 app.use("/api/v1/:lang/users/", usersRouter);
 app.use("/api/v1/:lang/cities/", citiesRouter);
+app.use("/api/v1/:lang/reviews", reviewsRouter);
 app.use("/api/v1/:lang/reports/", reportsRouter);
 app.use("/api/v1/:lang/chat/message/", chatRouter);
 app.use("/api/v1/notifications/", notificationsRouter);

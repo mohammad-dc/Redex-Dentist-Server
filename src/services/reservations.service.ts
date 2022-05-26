@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import mongoose from "mongoose";
 import { LangTypes } from "../@types/app.type";
 import { ReservationsStatusType } from "../@types/reservations.type";
 import { reservationStatus } from "../enums/auth.enum";
@@ -142,19 +143,21 @@ export class ReservationsService {
     res: Response,
     next: NextFunction
   ) {
-    const { lang, role, status } = req.params;
-    const { skip } = req.query;
+    const { lang } = req.params;
+    const { skip, status } = req.query;
 
     try {
-      const { user_id } = extractDataFromToken(req);
+      const { user_id, role } = extractDataFromToken(req);
 
       let filter: IReservationMatchFilter = {};
 
+      const ObjectId = mongoose.Types.ObjectId;
+
       if (role === "doctor") {
-        filter.doctor = user_id;
+        filter.doctor = new ObjectId(user_id);
       }
       if (role === "patient") {
-        filter.patient = user_id;
+        filter.patient = new ObjectId(user_id);
       }
 
       if (status) {
@@ -171,32 +174,23 @@ export class ReservationsService {
         })
         .unwind("doctor")
         .lookup({
-          as: "patient",
-          localField: "patient",
+          as: "doctor.city",
+          localField: "doctor.city",
           foreignField: "_id",
-          from: "users",
+          from: "cities",
         })
-        .unwind("patient")
+        .unwind("doctor.city")
         .project({
-          doctor: "$doctor",
-          patient: "$patient",
-          accepted: "$accepted",
+          doctor: {
+            name: "$doctor.name",
+            image_url: "$doctor.image_url",
+            city:
+              lang === "ar" ? "$doctor.city.city_ar" : "$doctor.city.city_en",
+            address: "$doctor.address",
+          },
           date: "$date",
           note: "$note",
-          done: "$done",
-        })
-        .group({
-          _id: "$date",
-          reservations: {
-            $push: {
-              doctor: "$doctor",
-              patient: "$patient",
-              accepted: "$accepted",
-              date: "$date",
-              note: "$note",
-              done: "$done",
-            },
-          },
+          status: "$status",
         })
         .skip(skip ? parseInt(skip as string) : 0)
         .limit(5);

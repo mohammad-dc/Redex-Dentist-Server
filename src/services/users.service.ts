@@ -172,25 +172,15 @@ export class UsersServices {
           foreignField: "doctor",
         })
         .project({
-          _id: 0,
-          user: {
-            _id: "$_id",
-            name: "$name",
-            phone: "$phone",
-            clinic_name: "$clinic_name",
-            bio: "$bio",
-            role: "$role",
-            city: lang === "en" ? "$city.city_en" : "$city.city_ar",
-            address: "$address",
-            image_url: "$image_url",
+          _id: "$_id",
+          name: "$name",
+          role: "$role",
+          city: lang === "en" ? "$city.city_en" : "$city.city_ar",
+          address: "$address",
+          image_url: "$image_url",
+          rate: {
+            $divide: [{ $sum: "$reviews.rate" }, { $size: "$reviews" }],
           },
-          reviews: "$reviews",
-          reviews_count: { $size: "$reviews" },
-        })
-        .group({
-          _id: "$user",
-          rate_sum: { $sum: "$reviews.rate" },
-          rate: { $avg: "$reviews.rate" },
         })
         .match({ rate: rate ? (rate === 0 ? null : rate) : { $ne: "" } })
         .skip(skip ? parseInt(skip as string) : 0)

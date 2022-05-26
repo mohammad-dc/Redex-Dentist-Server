@@ -38,7 +38,7 @@ reservationsRouter.post(
 );
 
 reservationsRouter.get(
-  "/:role/:status/all",
+  "/",
   checkAccessTokenValidation,
   reservationsService.getAllUserReservations
 );
