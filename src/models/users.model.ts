@@ -35,6 +35,7 @@ const UsersSchema = new mongoose.Schema(
     },
     bio: {
       type: String,
+      default: "",
     },
     blocked: {
       type: Boolean,

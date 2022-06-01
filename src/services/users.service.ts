@@ -34,11 +34,47 @@ export class UsersServices {
           foreignField: "doctor",
         })
         .lookup({
-          as: "reviews",
           from: "reviews",
-          localField: "_id",
-          foreignField: "doctor",
+          as: "reviews",
+          let: { review_id: "$_id" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$$review_id", "$doctor"] } } },
+            {
+              $lookup: {
+                as: "patient",
+                from: "users",
+                localField: "patient",
+                foreignField: "_id",
+              },
+            },
+            { $unwind: { path: "$patient" } },
+            { $sort: { _id: -1 } },
+            {
+              $project: {
+                _id: 1,
+                patient: {
+                  _id: 1,
+                  name: 1,
+                  image_url: 1,
+                },
+                rate: 1,
+                note: 1,
+                createdAt: 1,
+              },
+            },
+            { $limit: 10 },
+          ],
         })
+        .lookup({
+          from: "reviews",
+          as: "reviews_count",
+          let: { review_id: "$_id" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$$review_id", "$doctor"] } } },
+            { $count: "reviews_count" },
+          ],
+        })
+        .unwind("reviews_count")
         .project({
           _id: 0,
           user: {
@@ -54,6 +90,7 @@ export class UsersServices {
           },
           works: "$works",
           reviews: "$reviews",
+          reviews_count: "$reviews_count.reviews_count",
         });
       response.retrieveSuccess(res, result[0]);
     } catch (error) {

@@ -15,11 +15,11 @@ import reservationsModel from "../models/reservations.model";
 export class ReservationsService {
   //users
   async addReservation(req: Request, res: Response, next: NextFunction) {
-    const { lang, role } = req.params;
+    const { lang } = req.params;
     const { date, user } = req.body;
 
     try {
-      const { user_id } = extractDataFromToken(req);
+      const { user_id, role } = extractDataFromToken(req);
 
       let reservation: ISaveReservation = {
         date,
@@ -46,11 +46,11 @@ export class ReservationsService {
   }
 
   async updateReservation(req: Request, res: Response, next: NextFunction) {
-    const { lang, role, _id } = req.params;
+    const { lang, _id } = req.params;
     const { date, user } = req.body;
 
     try {
-      const { user_id } = extractDataFromToken(req);
+      const { user_id, role } = extractDataFromToken(req);
 
       let reservation: IUpdateReservation = {
         date,
@@ -132,6 +132,26 @@ export class ReservationsService {
 
       result
         ? response.reservationRejected(lang as LangTypes, res)
+        : response.reservationNotAvailable(lang as LangTypes, res);
+    } catch (error) {
+      response.somethingWentWrong(lang as LangTypes, res, error as Error);
+    }
+  }
+
+  async addNoteToReservation(req: Request, res: Response, next: NextFunction) {
+    const { lang, _id } = req.params;
+    const { note } = req.params;
+
+    try {
+      const { user_id } = extractDataFromToken(req);
+
+      const result = await reservationsModel.findOneAndUpdate(
+        { _id, doctor: user_id },
+        { note }
+      );
+
+      result
+        ? response.addedSuccess(lang as LangTypes, res)
         : response.reservationNotAvailable(lang as LangTypes, res);
     } catch (error) {
       response.somethingWentWrong(lang as LangTypes, res, error as Error);

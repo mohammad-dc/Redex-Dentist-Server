@@ -17,6 +17,15 @@ citiesRouter.post(
   citiesService.addCity
 );
 
+citiesRouter.put(
+  "/admin/update/:_id",
+  checkRequestValidation(citiesSchema),
+  citiesService.updateCity
+);
+
 citiesRouter.get("/admin/details", citiesService.getCitiesDetails);
 
-citiesRouter.put("/admin/:action/:_id", citiesService.activationCity);
+citiesRouter.put(
+  "/admin/activation/:action/:_id",
+  citiesService.activationCity
+);

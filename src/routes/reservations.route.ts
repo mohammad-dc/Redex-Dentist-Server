@@ -8,13 +8,19 @@ const reservationsService = new ReservationsService();
 
 //users
 reservationsRouter.post(
-  "/:role/add",
+  "/add",
   checkAccessTokenValidation,
   reservationsService.addReservation
 );
 
+reservationsRouter.post(
+  "/note/add/:_id",
+  checkAccessTokenValidation,
+  reservationsService.addNoteToReservation
+);
+
 reservationsRouter.put(
-  "/:role/update/:_id",
+  "/update/:_id",
   checkAccessTokenValidation,
   reservationsService.updateReservation
 );
@@ -26,13 +32,13 @@ reservationsRouter.post(
 );
 
 reservationsRouter.post(
-  "/accept/:_id",
+  "/approve/:_id",
   checkAccessTokenValidation,
   reservationsService.acceptReservation
 );
 
 reservationsRouter.post(
-  "/reject/:_id",
+  "/decline/:_id",
   checkAccessTokenValidation,
   reservationsService.rejectReservation
 );

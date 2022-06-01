@@ -40,6 +40,28 @@ export class CitiesServices {
     }
   }
 
+  async updateCity(req: Request, res: Response, next: NextFunction) {
+    const { _id } = req.params;
+    const { city_ar, city_en } = req.body;
+
+    try {
+      const result = await citiesModel.findByIdAndUpdate(
+        { _id },
+        { city_ar, city_en }
+      );
+      const data: ICityResponse = {
+        _id,
+        city_ar,
+        city_en,
+        active: result.active,
+      };
+      sockets.citiesSocket({ type: "edit", data });
+      response.updatedSuccess("ar", res);
+    } catch (error) {
+      response.somethingWentWrong("ar", res, error as Error);
+    }
+  }
+
   async getCitiesDetails(req: Request, res: Response, next: NextFunction) {
     try {
       const results = await citiesModel.aggregate([]).project({
