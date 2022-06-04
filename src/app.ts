@@ -6,8 +6,8 @@ import toobusyJs from "toobusy-js";
 import cors from "cors";
 import session from "express-session";
 import connectMongoDBSession from "connect-mongodb-session";
-import mongoose from "mongoose";
 import compression from "compression";
+import { server, app } from "./utils/server";
 //configs
 import config from "./config/config.config";
 //routes
@@ -21,18 +21,11 @@ import { reportsRouter } from "./routes/reports.route";
 import { adminRouter } from "./routes/admin.route";
 import { chatRouter } from "./routes/chat.route";
 import { reviewsRouter } from "./routes/reviews.route";
+import { connectToMongo } from "./utils/mongo/connectDB";
 
 //connect MongoDB
-mongoose.connect(config.mongo.url, config.mongo.options);
-const db = mongoose.connection;
-db.once("error", (error) => {
-  console.error(error);
-});
-db.on("open", () => {
-  console.info("Mongo Connected");
-});
-// app
-export const app = express();
+connectToMongo();
+
 // mongodB session storeredexDintistdb
 const MongoDBStore = connectMongoDBSession(session);
 const store = new MongoDBStore({
@@ -64,13 +57,13 @@ app.use("/api/v1/:lang/users/", usersRouter);
 app.use("/api/v1/:lang/cities/", citiesRouter);
 app.use("/api/v1/:lang/reviews", reviewsRouter);
 app.use("/api/v1/:lang/reports/", reportsRouter);
-app.use("/api/v1/:lang/chat/message/", chatRouter);
+app.use("/api/v1/:lang/chat/", chatRouter);
 app.use("/api/v1/notifications/", notificationsRouter);
 app.use("/api/v1/:lang/reservations/", reservationsRouter);
 app.use("/api/v1/:lang/report/reasons/", reportReasonsRouter);
 
 try {
-  app.listen(config.server.port, () =>
+  server.listen(config.server.port, () =>
     console.log(`app is running up on port = ${config.server.port}`)
   );
 } catch (error) {

@@ -2,9 +2,8 @@ import mongoose from "mongoose";
 
 const BreakSchema = new mongoose.Schema(
   {
-    start: { type: Date },
-    end: { type: Date },
-    open: { type: Boolean },
+    note: { type: String, default: "" },
+    active: { type: Boolean, default: false },
   },
   { timestamps: false, versionKey: false, _id: false }
 );

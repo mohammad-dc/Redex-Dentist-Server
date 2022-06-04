@@ -87,6 +87,7 @@ export class UsersServices {
             city: lang === "en" ? "$city.city_en" : "$city.city_ar",
             address: "$address",
             image_url: "$image_url",
+            work_time: "$work_time",
           },
           works: "$works",
           reviews: "$reviews",
@@ -165,12 +166,20 @@ export class UsersServices {
     const { saturday, sunday, monday, tuesday, wednesday, thursday, friday } =
       req.body;
 
-    const { user_id } = extractDataFromToken(req);
-
     try {
+      const { user_id } = extractDataFromToken(req);
+      const work_time = {
+        saturday,
+        sunday,
+        monday,
+        tuesday,
+        wednesday,
+        thursday,
+        friday,
+      };
       const result = await usersModel.findByIdAndUpdate(
         { _id: user_id },
-        { saturday, sunday, monday, tuesday, wednesday, thursday, friday }
+        { work_time }
       );
       result
         ? response.updatedSuccess(lang as LangTypes, res)

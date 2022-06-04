@@ -9,9 +9,12 @@ const reportReasonsService = new ReportReasonsService();
 reportReasonsRouter.get("/", reportReasonsService.getAllReasons);
 
 // admin
-reportReasonsRouter.post("/add", reportReasonsService.addReason);
+reportReasonsRouter.post("/admin/add", reportReasonsService.addReason);
 
-reportReasonsRouter.put("/update/:_id", reportReasonsService.updateReason);
+reportReasonsRouter.put(
+  "/admin/update/:_id",
+  reportReasonsService.updateReason
+);
 
 reportReasonsRouter.get("/admin", reportReasonsService.getAllReasonsDetails);
 

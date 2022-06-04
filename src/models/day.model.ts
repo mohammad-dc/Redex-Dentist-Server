@@ -3,10 +3,9 @@ import BreakSchema from "./break.model";
 
 const DaySchema = new mongoose.Schema(
   {
-    start: { type: Date, required: true },
-    end: { type: Date, required: true },
+    time: [String],
     vacation: { type: Boolean, default: false },
-    break: BreakSchema,
+    break: { type: BreakSchema, default: { note: "", active: false } },
   },
   { timestamps: false, versionKey: false, _id: false }
 );

@@ -9,10 +9,16 @@ export const chatRouter = Router({ mergeParams: true });
 const chatService = new ChatService();
 
 chatRouter.post(
-  "/send",
+  "/message/send",
   checkAccessTokenValidation,
   checkRequestValidation(chatSchema),
   chatService.sendMessage
 );
 
-chatRouter.get("/", checkAccessTokenValidation, chatService.getAllMessages);
+chatRouter.get(
+  "/message/",
+  checkAccessTokenValidation,
+  chatService.getAllMessages
+);
+
+chatRouter.get("/list", checkAccessTokenValidation, chatService.getChatList);

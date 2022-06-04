@@ -83,6 +83,7 @@ export class AuthServices {
           city: lang === "ar" ? "$city.city_ar" : "$city.city_en",
           address: "$address",
           password: "$password",
+          work_time: 1,
         });
 
       if (!result[0]) response.phoneWrong(lang as LangTypes, res);
@@ -127,6 +128,7 @@ export class AuthServices {
         image_url: "$image_url",
         city: lang === "ar" ? "$city.city_ar" : "$city.city_en",
         address: "$address",
+        work_time: 1,
       });
 
     try {

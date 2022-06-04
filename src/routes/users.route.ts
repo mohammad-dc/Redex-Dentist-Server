@@ -2,6 +2,7 @@ import { Router } from "express";
 import { checkAccessTokenValidation } from "../middlewares/checkAccessTokenValidation";
 import { checkRequestValidation } from "../middlewares/requestValidation";
 import { uploads } from "../middlewares/uploadImage";
+import { checkIfDoctor } from "../middlewares/usersMiddlewares";
 import { UsersServices } from "../services/users.service";
 import {
   searchDoctorsSchema,
@@ -37,6 +38,7 @@ usersRouter.post(
 usersRouter.put(
   "/worktime/update",
   checkAccessTokenValidation,
+  checkIfDoctor,
   usersServices.updateWorkTimeProfile
 );
 

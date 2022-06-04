@@ -1,14 +1,15 @@
 import mongoose from "mongoose";
 const ChatSchema = new mongoose.Schema(
   {
-    sender: {
+    doctor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Users",
     },
-    receiver: {
+    patient: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Users",
     },
+    sender: { type: String, required: true },
     message: {
       type: String,
       required: true,
