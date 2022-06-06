@@ -22,6 +22,7 @@ import { adminRouter } from "./routes/admin.route";
 import { chatRouter } from "./routes/chat.route";
 import { reviewsRouter } from "./routes/reviews.route";
 import { connectToMongo } from "./utils/mongo/connectDB";
+import { worksRouter } from "./routes/works.route";
 
 //connect MongoDB
 connectToMongo();
@@ -58,6 +59,7 @@ app.use("/api/v1/:lang/cities/", citiesRouter);
 app.use("/api/v1/:lang/reviews", reviewsRouter);
 app.use("/api/v1/:lang/reports/", reportsRouter);
 app.use("/api/v1/:lang/chat/", chatRouter);
+app.use("/api/v1/:lang/works/images/", worksRouter);
 app.use("/api/v1/notifications/", notificationsRouter);
 app.use("/api/v1/:lang/reservations/", reservationsRouter);
 app.use("/api/v1/:lang/report/reasons/", reportReasonsRouter);

@@ -1,6 +1,7 @@
 import fs from "fs";
 import S3 from "aws-sdk/clients/s3";
 import config from "../../config/config.config";
+import { S3BucketsNameType } from "../../@types/aws.type";
 
 const s3 = new S3({
   region: config.aws.bucket.region as string,
@@ -9,10 +10,16 @@ const s3 = new S3({
 });
 
 //upload file to S3
-export const uploadToS3 = async (file: { path: string; name: string }) => {
+export const uploadToS3 = async (
+  file: { path: string; name: string },
+  bucket: S3BucketsNameType = "profile"
+) => {
   const fileStream = await fs.createReadStream(file.path);
   const uploadParams: any = {
-    Bucket: config.aws.bucket.name,
+    Bucket:
+      bucket === "profile"
+        ? config.aws.bucket.name
+        : config.aws.bucket.works_name,
     Body: fileStream,
     Key: file.name,
     ACL: "public-read",

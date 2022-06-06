@@ -30,8 +30,16 @@ export class UsersServices {
         .lookup({
           as: "works",
           from: "works",
-          localField: "_id",
-          foreignField: "doctor",
+          let: { doctor_id: "$_id" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$$doctor_id", "$doctor"] } } },
+            {
+              $project: {
+                _id: 1,
+                image_url: 1,
+              },
+            },
+          ],
         })
         .lookup({
           from: "reviews",
