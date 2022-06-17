@@ -34,13 +34,13 @@ reservationsRouter.post(
 reservationsRouter.post(
   "/approve/:_id",
   checkAccessTokenValidation,
-  reservationsService.acceptReservation
+  reservationsService.approveReservation
 );
 
 reservationsRouter.post(
   "/decline/:_id",
   checkAccessTokenValidation,
-  reservationsService.rejectReservation
+  reservationsService.declineReservation
 );
 
 reservationsRouter.get(

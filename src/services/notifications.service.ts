@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { LangTypes } from "../@types/app.type";
 import { extractDataFromToken } from "../functions/jwt";
 import response from "../helpers/response";
-import notifications from "../models/notifications";
+import notifications from "../models/notifications.model";
 
 export class NotificationsService {
   async getAllUserNotifications(
@@ -38,14 +38,14 @@ export class NotificationsService {
     const { lang } = req.params;
     const { user_id } = extractDataFromToken(req);
     try {
-      const result = await notifications.findOne({
-        receiver: { $in: [user_id] },
-        read_by: { $nin: [user_id] },
-      });
+      const result = await notifications
+        .find({
+          receiver: { $in: [user_id] },
+          read_by: { $nin: [user_id] },
+        })
+        .count();
 
-      result
-        ? res.status(200).json({ success: true, response: { missing: true } })
-        : res.status(200).json({ success: true, response: { missing: false } });
+      response.retrieveSuccess(res, result);
     } catch (error) {
       response.somethingWentWrong(lang as LangTypes, res, error as Error);
     }
@@ -65,7 +65,7 @@ export class NotificationsService {
         { _id: { $in: _ids }, receiver: { $in: [user_id] } },
         { $addToSet: { read_by: user_id } }
       );
-      response.updatedSuccess(lang as LangTypes, res);
+      next();
     } catch (error) {
       response.somethingWentWrong(lang as LangTypes, res, error as Error);
     }

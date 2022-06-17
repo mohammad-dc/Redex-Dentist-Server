@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { reservationStatus } from "../enums/auth.enum";
+import { reservationStatus } from "../enums/reservations.enum";
 
 const ReservationsSchema = new mongoose.Schema(
   {

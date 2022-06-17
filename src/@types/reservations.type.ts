@@ -1,4 +1,4 @@
-import { reservationStatus } from "../enums/auth.enum";
+import { reservationStatus } from "../enums/reservations.enum";
 
 export type ReservationsStatusType =
   | reservationStatus.APPROVED

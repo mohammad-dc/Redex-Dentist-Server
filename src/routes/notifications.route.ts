@@ -20,5 +20,6 @@ notificationsRouter.get(
 notificationsRouter.put(
   "/read",
   checkAccessTokenValidation,
-  notificationsService.setNotificationsAsRead
+  notificationsService.setNotificationsAsRead,
+  notificationsService.checkMissingNotifications
 );

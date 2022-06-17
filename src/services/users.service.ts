@@ -108,11 +108,11 @@ export class UsersServices {
   }
 
   async updateUserProfile(req: Request, res: Response, next: NextFunction) {
-    const { lang, role } = req.params;
-    const { name, phone, bio, city, address, clinic_name } = req.body;
+    const { lang } = req.params;
+    const { name, phone, bio, city, address, clinic_name, email } = req.body;
 
     try {
-      const { user_id } = extractDataFromToken(req);
+      const { user_id, role } = extractDataFromToken(req);
       let user: any = {};
 
       if (role === usersRoles.DOCTOR) {
@@ -123,6 +123,7 @@ export class UsersServices {
           city,
           address,
           clinic_name,
+          email,
         };
       } else if (role === usersRoles.PATIENT) {
         user = {
@@ -156,10 +157,13 @@ export class UsersServices {
       );
 
       if (result) {
-        result.image_url &&
-          (await deleteFileFromS3(
-            result.image_url.substring(result.image_url.lastIndexOf("/") + 1)
-          ));
+        if (result.image_url) {
+          const image_name = result.image_url.substring(
+            result.image_url.lastIndexOf("/") + 1
+          );
+          image_name !== "user_default.png" &&
+            (await deleteFileFromS3(image_name));
+        }
         response.updatedSuccess(lang as LangTypes, res);
       } else {
         response.accountNotExist(lang as LangTypes, res);

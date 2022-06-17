@@ -2,7 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import { LangTypes } from "../@types/app.type";
 import { ReservationsStatusType } from "../@types/reservations.type";
-import { reservationStatus } from "../enums/auth.enum";
+import { createNotification } from "../core/notification.core";
+import { noticeTypes } from "../enums/notifications.enum";
+import { reservationStatus } from "../enums/reservations.enum";
 import { extractDataFromToken } from "../functions/jwt";
 import response from "../helpers/response";
 import {
@@ -38,7 +40,12 @@ export class ReservationsService {
       }
 
       await new reservationsModel(reservation).save();
-
+      //send notification add review
+      await createNotification({
+        sender: user_id,
+        notice_type: noticeTypes.RESERVATION_ADDED,
+        receiver: [user],
+      });
       response.addedSuccess(lang as LangTypes, res);
     } catch (error) {
       response.somethingWentWrong(lang as LangTypes, res, error as Error);
@@ -63,6 +70,7 @@ export class ReservationsService {
 
       if (role === "patient") {
         reservation.doctor = user;
+        reservation.status = reservationStatus.PENDING;
       }
 
       const result = await reservationsModel.findOneAndUpdate(
@@ -89,18 +97,24 @@ export class ReservationsService {
 
       const result = await reservationsModel.findOneAndUpdate(
         { _id, created_by: user_id },
-        { status: "canceled" }
+        { status: reservationStatus.CANCELED }
       );
-
-      result
-        ? response.reservationCanceled(lang as LangTypes, res)
-        : response.reservationNotAvailable(lang as LangTypes, res);
+      if (result) {
+        await createNotification({
+          sender: user_id,
+          notice_type: noticeTypes.RESERVATION_CANCELED,
+          receiver: [result.doctor],
+        });
+        response.reservationCanceled(lang as LangTypes, res);
+      } else {
+        response.reservationNotAvailable(lang as LangTypes, res);
+      }
     } catch (error) {
       response.somethingWentWrong(lang as LangTypes, res, error as Error);
     }
   }
 
-  async acceptReservation(req: Request, res: Response, next: NextFunction) {
+  async approveReservation(req: Request, res: Response, next: NextFunction) {
     const { lang, _id } = req.params;
 
     try {
@@ -108,18 +122,25 @@ export class ReservationsService {
 
       const result = await reservationsModel.findOneAndUpdate(
         { _id, created_by: user_id, doctor: user_id },
-        { accepted: true }
+        { status: reservationStatus.APPROVED }
       );
 
-      result
-        ? response.reservationAccepted(lang as LangTypes, res)
-        : response.reservationNotAvailable(lang as LangTypes, res);
+      if (result) {
+        await createNotification({
+          sender: user_id,
+          notice_type: noticeTypes.RESERVATION_APPROVED,
+          receiver: [result.patient],
+        });
+        response.reservationAccepted(lang as LangTypes, res);
+      } else {
+        response.reservationNotAvailable(lang as LangTypes, res);
+      }
     } catch (error) {
       response.somethingWentWrong(lang as LangTypes, res, error as Error);
     }
   }
 
-  async rejectReservation(req: Request, res: Response, next: NextFunction) {
+  async declineReservation(req: Request, res: Response, next: NextFunction) {
     const { lang, _id } = req.params;
 
     try {
@@ -127,12 +148,19 @@ export class ReservationsService {
 
       const result = await reservationsModel.findOneAndUpdate(
         { _id, created_by: user_id, doctor: user_id },
-        { accepted: false }
+        { status: reservationStatus.DECLINED }
       );
 
-      result
-        ? response.reservationRejected(lang as LangTypes, res)
-        : response.reservationNotAvailable(lang as LangTypes, res);
+      if (result) {
+        await createNotification({
+          sender: user_id,
+          notice_type: noticeTypes.RESERVATION_DECLINED,
+          receiver: [result.patient],
+        });
+        response.reservationRejected(lang as LangTypes, res);
+      } else {
+        response.reservationNotAvailable(lang as LangTypes, res);
+      }
     } catch (error) {
       response.somethingWentWrong(lang as LangTypes, res, error as Error);
     }

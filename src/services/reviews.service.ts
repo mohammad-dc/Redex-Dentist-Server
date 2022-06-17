@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import mongoose from "mongoose";
 import { LangTypes } from "../@types/app.type";
+import { createNotification } from "../core/notification.core";
+import { noticeTypes } from "../enums/notifications.enum";
 import { extractDataFromToken } from "../functions/jwt";
 import response from "../helpers/response";
 import reviewsModel from "../models/reviews.model";
@@ -13,7 +15,15 @@ export class ReviewsService {
     try {
       const { user_id } = extractDataFromToken(req);
 
+      //save review
       await new reviewsModel({ rate, doctor, note, patient: user_id }).save();
+      //send notification add review
+      await createNotification({
+        sender: user_id,
+        notice_type: noticeTypes.ADD_REVIEW,
+        receiver: [doctor],
+      });
+      //send response to client
       response.addedSuccess(lang as LangTypes, res);
     } catch (error) {
       response.somethingWentWrong(lang as LangTypes, res, error as Error);

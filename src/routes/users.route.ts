@@ -22,13 +22,13 @@ usersRouter.get(
 );
 
 usersRouter.put(
-  "/:role/profile/update",
+  "/profile/update",
   checkAccessTokenValidation,
   checkRequestValidation(updateProfileSchema),
   usersServices.updateUserProfile
 );
 
-usersRouter.post(
+usersRouter.put(
   "/profile/image/update",
   checkAccessTokenValidation,
   uploads.single("image_url"),
