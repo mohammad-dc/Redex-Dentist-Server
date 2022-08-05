@@ -5,7 +5,7 @@ import { usersRoles } from "../enums/auth.enum";
 import { comparePassword, hashPassword } from "../functions/bcryptPassword";
 import { imageUploadProcess } from "../functions/imageUploadProcess";
 import { extractDataFromToken } from "../functions/jwt";
-import { sendSMS } from "../functions/twillio";
+// import { sendSMS } from "../functions/twillio";
 import response from "../helpers/response";
 import usersModel from "../models/users.model";
 import { deleteFileFromS3 } from "../utils/aws/s3";
@@ -282,12 +282,12 @@ export class UsersServices {
         { verification_code }
       );
       if (result) {
-        sendSMS(
-          lang === "ar"
-            ? `رمز التفعيل لاعادة تعين كلمة المرور ${verification_code}`
-            : `verification code to reset password ${verification_code}`,
-          phone
-        );
+        // sendSMS(
+        //   lang === "ar"
+        //     ? `رمز التفعيل لاعادة تعين كلمة المرور ${verification_code}`
+        //     : `verification code to reset password ${verification_code}`,
+        //   phone
+        // );
         response.sendVerificationCodeSuccess(lang as LangTypes, res);
       } else {
         response.accountNotExist(lang as LangTypes, res);
