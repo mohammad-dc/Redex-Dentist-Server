@@ -82,7 +82,6 @@ export class UsersServices {
             { $count: "reviews_count" },
           ],
         })
-        .unwind("reviews_count")
         .project({
           _id: 0,
           user: {
@@ -92,14 +91,29 @@ export class UsersServices {
             clinic_name: "$clinic_name",
             bio: "$bio",
             role: "$role",
-            city: lang === "en" ? "$city.city_en" : "$city.city_ar",
+            city: "$city.city_en",
             address: "$address",
             image_url: "$image_url",
             work_time: "$work_time",
           },
           works: "$works",
           reviews: "$reviews",
-          reviews_count: "$reviews_count.reviews_count",
+          reviews_count: {
+            $cond: {
+              if: { $gt: [{ $size: "$reviews_count" }, 0] },
+              then: { $first: "$reviews_count.reviews_count" },
+              else: 0,
+            },
+          },
+          rate: {
+            $cond: {
+              if: { $eq: [0, { $size: "$reviews" }] },
+              then: 0,
+              else: {
+                $divide: [{ $sum: "$reviews.rate" }, { $size: "$reviews" }],
+              },
+            },
+          },
         });
       response.retrieveSuccess(res, result[0]);
     } catch (error) {
@@ -237,7 +251,13 @@ export class UsersServices {
           address: "$address",
           image_url: "$image_url",
           rate: {
-            $divide: [{ $sum: "$reviews.rate" }, { $size: "$reviews" }],
+            $cond: {
+              if: { $eq: [0, { $size: "$reviews" }] },
+              then: 0,
+              else: {
+                $divide: [{ $sum: "$reviews.rate" }, { $size: "$reviews" }],
+              },
+            },
           },
         })
         .match({ rate: rate ? (rate === 0 ? null : rate) : { $ne: "" } })
@@ -246,6 +266,7 @@ export class UsersServices {
 
       response.getSuccess(res, result);
     } catch (error) {
+      console.log(error);
       response.somethingWentWrong(lang as LangTypes, res, error as Error);
     }
   }
@@ -340,10 +361,50 @@ export class UsersServices {
         })
         .unwind("city")
         .lookup({
-          as: "reservations",
+          as: "total_reservations_count",
           from: "reservations",
-          localField: "_id",
-          foreignField: "patient",
+          let: { id: "$_id" },
+          pipeline: [
+            {
+              $match: { $expr: { $eq: ["$$id", "$patient"] } },
+            },
+            { $count: "count" },
+          ],
+        })
+        .lookup({
+          as: "reservations_month_count",
+          from: "reservations",
+          let: { id: "$_id" },
+          pipeline: [
+            {
+              $match: { $expr: { $eq: ["$$id", "$patient"] } },
+            },
+            {
+              $project: {
+                month: { $month: "$createdAt" },
+                year: { $year: "$createdAt" },
+              },
+            },
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$month", current_date.getMonth()] },
+                    { $eq: ["$year", current_date.getFullYear()] },
+                  ],
+                },
+              },
+            },
+            { $count: "count" },
+          ],
+        })
+        .unwind({
+          path: "$total_reservations_count",
+          preserveNullAndEmptyArrays: true,
+        })
+        .unwind({
+          path: "$reservations_month_count",
+          preserveNullAndEmptyArrays: true,
         })
         .project({
           _id: "_$id",
@@ -352,29 +413,8 @@ export class UsersServices {
           phone: "$phone",
           city: "$city.city_ar",
           address: "$address",
-          total_reservations: { $size: "$reservations" },
-          reservations_month: {
-            $filter: {
-              input: "$reservations",
-              as: "res",
-              cond: {
-                $and: [
-                  { month: current_date.getMonth() },
-                  { year: current_date.getFullYear() },
-                ],
-              },
-            },
-          },
-        })
-        .project({
-          _id: "_$id",
-          image_url: "$image_url",
-          name: "$name",
-          phone: "$phone",
-          city: "$city",
-          address: "$address",
-          total_reservations_count: "$total_reservations",
-          reservations_month_count: { $size: "$reservations_month" },
+          total_reservations_count: "$total_reservations_count.count",
+          reservations_month_count: "$reservations_month_count.count",
         })
         .skip(skip ? parseInt(skip as string) : 0)
         .limit(20);
@@ -410,16 +450,63 @@ export class UsersServices {
         })
         .unwind("city")
         .lookup({
-          as: "reservations",
+          as: "total_reservations_count",
           from: "reservations",
-          localField: "_id",
-          foreignField: usersRoles.DOCTOR,
+          let: { id: "$_id" },
+          pipeline: [
+            {
+              $match: { $expr: { $eq: ["$$id", "$doctor"] } },
+            },
+            { $count: "count" },
+          ],
         })
         .lookup({
-          as: "reviews",
+          as: "reservations_month_count",
+          from: "reservations",
+          let: { id: "$_id" },
+          pipeline: [
+            {
+              $match: { $expr: { $eq: ["$$id", "$doctor"] } },
+            },
+            {
+              $project: {
+                month: { $month: "$createdAt" },
+                year: { $year: "$createdAt" },
+              },
+            },
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$month", current_date.getMonth()] },
+                    { $eq: ["$year", current_date.getFullYear()] },
+                  ],
+                },
+              },
+            },
+            { $count: "count" },
+          ],
+        })
+        .unwind({
+          path: "$total_reservations_count",
+          preserveNullAndEmptyArrays: true,
+        })
+        .unwind({
+          path: "$reservations_month_count",
+          preserveNullAndEmptyArrays: true,
+        })
+        .lookup({
           from: "reviews",
-          localField: "_id",
-          foreignField: usersRoles.DOCTOR,
+          as: "reviews",
+          let: { review_id: "$_id" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$$review_id", "$doctor"] } } },
+            {
+              $project: {
+                rate: 1,
+              },
+            },
+          ],
         })
         .lookup({
           as: "reports",
@@ -437,32 +524,17 @@ export class UsersServices {
           city: "$city.city_ar",
           address: "$address",
           reports: { $size: "$reports" },
-          total_reservations: { $size: "$reservations" },
-          reservations_month: {
-            $filter: {
-              input: "$reservations",
-              as: "res",
-              cond: {
-                $and: [
-                  { month: current_date.getMonth() },
-                  { year: current_date.getFullYear() },
-                ],
+          total_reservations_count: "$total_reservations_count.count",
+          reservations_month_count: "$reservations_month_count.count",
+          rate: {
+            $cond: {
+              if: { $eq: [0, { $size: "$reviews" }] },
+              then: 0,
+              else: {
+                $divide: [{ $sum: "$reviews.rate" }, { $size: "$reviews" }],
               },
             },
           },
-        })
-        .project({
-          _id: "$_id",
-          email: "$email",
-          clinic_name: "$clinic_name",
-          image_url: "$image_url",
-          name: "$name",
-          phone: "$phone",
-          city: "$city",
-          address: "$address",
-          reports: "$reports",
-          total_reservations_count: "$total_reservations",
-          reservations_month_count: { $size: "$reservations_month" },
         })
         .skip(skip ? parseInt(skip as string) : 0)
         .limit(20);

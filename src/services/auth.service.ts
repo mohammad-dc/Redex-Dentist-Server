@@ -22,38 +22,43 @@ export class AuthServices {
   //register dr or patient
   async register(req: Request, res: Response, next: NextFunction) {
     const { lang, role } = req.params;
-    const { name, phone, password, city, address, clinic_name } = req.body;
-
-    const hash_password = await hashPassword(password);
-
-    let user: IDoctorRegister | IPatientRegister | {} = {};
-
-    if (role === usersRoles.DOCTOR) {
-      user = {
-        name,
-        phone,
-        password: hash_password as string,
-        city,
-        address,
-        clinic_name,
-        role: role as usersRoles.DOCTOR,
-      };
-    } else if (role === usersRoles.PATIENT) {
-      user = {
-        name,
-        phone,
-        password: hash_password as string,
-        city,
-        address,
-        role: role as usersRoles.PATIENT,
-      };
-    }
+    const { name, phone, password, city, address, email, clinic_name } =
+      req.body;
 
     try {
+      const hash_password = await hashPassword(password);
+
+      let user: IDoctorRegister | IPatientRegister | {} = {};
+
+      if (role === usersRoles.DOCTOR) {
+        user = {
+          name,
+          phone,
+          password: hash_password as string,
+          city,
+          address,
+          clinic_name,
+          email,
+          role: role as usersRoles.DOCTOR,
+        };
+      } else if (role === usersRoles.PATIENT) {
+        user = {
+          name,
+          phone,
+          password: hash_password as string,
+          city,
+          address,
+          role: role as usersRoles.PATIENT,
+        };
+      }
+
+      console.log({ user });
+
       const _user = new usersModel(user);
       await _user.save();
       response.signupSuccess(lang as LangTypes, res);
     } catch (error) {
+      console.log(error);
       response.somethingWentWrong(lang as LangTypes, res, error as Error);
     }
   }

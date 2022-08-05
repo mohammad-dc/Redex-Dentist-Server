@@ -11,6 +11,7 @@ export const updateProfileSchema = yup.object().shape({
   city: yup.string().required(messages.requiredField("city")),
   address: yup.string(),
   clinic_name: yup.string(),
+  email: yup.string().email(),
   bio: yup.string(),
 });
 

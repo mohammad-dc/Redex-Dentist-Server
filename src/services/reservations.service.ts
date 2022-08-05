@@ -201,8 +201,11 @@ export class ReservationsService {
 
       const ObjectId = mongoose.Types.ObjectId;
 
+      let type = "doctor";
+
       if (role === "doctor") {
         filter.doctor = new ObjectId(user_id);
+        type = "patient";
       }
       if (role === "patient") {
         filter.patient = new ObjectId(user_id);
@@ -215,31 +218,50 @@ export class ReservationsService {
         .aggregate([])
         .match(filter)
         .lookup({
-          as: "doctor",
-          localField: "doctor",
+          as: `${type}`,
+          localField: `${type}`,
           foreignField: "_id",
           from: "users",
         })
-        .unwind("doctor")
+        .unwind(`${type}`)
         .lookup({
-          as: "doctor.city",
-          localField: "doctor.city",
+          as: `${type}.city`,
+          localField: `${type}.city`,
           foreignField: "_id",
           from: "cities",
         })
-        .unwind("doctor.city")
-        .project({
-          doctor: {
-            name: "$doctor.name",
-            image_url: "$doctor.image_url",
-            city:
-              lang === "ar" ? "$doctor.city.city_ar" : "$doctor.city.city_en",
-            address: "$doctor.address",
-          },
-          date: "$date",
-          note: "$note",
-          status: "$status",
-        })
+        .unwind(`${type}.city`)
+        .project(
+          type === "doctor"
+            ? {
+                doctor: {
+                  name: `$${type}.name`,
+                  image_url: `$${type}.image_url`,
+                  city:
+                    lang === "ar"
+                      ? `$${type}.city.city_ar`
+                      : `$${type}.city.city_en`,
+                  address: `$${type}.address`,
+                },
+                date: "$date",
+                note: "$note",
+                status: "$status",
+              }
+            : {
+                patient: {
+                  name: `$${type}.name`,
+                  image_url: `$${type}.image_url`,
+                  city:
+                    lang === "ar"
+                      ? `$${type}.city.city_ar`
+                      : `$${type}.city.city_en`,
+                  address: `$${type}.address`,
+                },
+                date: "$date",
+                note: "$note",
+                status: "$status",
+              }
+        )
         .skip(skip ? parseInt(skip as string) : 0)
         .limit(5);
 
