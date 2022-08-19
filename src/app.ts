@@ -64,6 +64,14 @@ app.use("/api/v1/notifications/", notificationsRouter);
 app.use("/api/v1/:lang/reservations/", reservationsRouter);
 app.use("/api/v1/:lang/report/reasons/", reportReasonsRouter);
 
+//* health check
+app.get("/ping.html", (req, res, next) => {
+  return res.status(200).json({
+    success: true,
+    message: "Ok",
+  });
+});
+
 try {
   server.listen(config.server.port, () =>
     console.log(`app is running up on port = ${config.server.port}`)

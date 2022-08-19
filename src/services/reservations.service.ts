@@ -231,37 +231,18 @@ export class ReservationsService {
           from: "cities",
         })
         .unwind(`${type}.city`)
-        .project(
-          type === "doctor"
-            ? {
-                doctor: {
-                  name: `$${type}.name`,
-                  image_url: `$${type}.image_url`,
-                  city:
-                    lang === "ar"
-                      ? `$${type}.city.city_ar`
-                      : `$${type}.city.city_en`,
-                  address: `$${type}.address`,
-                },
-                date: "$date",
-                note: "$note",
-                status: "$status",
-              }
-            : {
-                patient: {
-                  name: `$${type}.name`,
-                  image_url: `$${type}.image_url`,
-                  city:
-                    lang === "ar"
-                      ? `$${type}.city.city_ar`
-                      : `$${type}.city.city_en`,
-                  address: `$${type}.address`,
-                },
-                date: "$date",
-                note: "$note",
-                status: "$status",
-              }
-        )
+        .project({
+          user: {
+            name: `$${type}.name`,
+            image_url: `$${type}.image_url`,
+            city:
+              lang === "ar" ? `$${type}.city.city_ar` : `$${type}.city.city_en`,
+            address: `$${type}.address`,
+          },
+          date: "$date",
+          note: "$note",
+          status: "$status",
+        })
         .skip(skip ? parseInt(skip as string) : 0)
         .limit(5);
 
