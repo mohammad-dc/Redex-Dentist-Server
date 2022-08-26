@@ -252,6 +252,31 @@ export class ReservationsService {
     }
   }
 
+  async getReservation(req: Request, res: Response, next: NextFunction) {
+    const { lang, reservation_id } = req.params;
+
+    try {
+      const result = await reservationsModel
+        .findById(
+          { _id: reservation_id },
+          {
+            _id: 1,
+            status: 1,
+            patient: 1,
+            doctor: 1,
+            date: 1,
+            note: 1,
+          }
+        )
+        .populate({ path: "patient", select: "_id name image_url" })
+        .populate({ path: "doctor", select: "_id name image_url" });
+
+      response.getSuccess(res, result);
+    } catch (error) {
+      response.somethingWentWrong(lang as LangTypes, res, error as Error);
+    }
+  }
+
   //admin
   async getReservationsCount(req: Request, res: Response, next: NextFunction) {
     try {

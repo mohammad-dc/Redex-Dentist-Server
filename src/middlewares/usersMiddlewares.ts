@@ -16,3 +16,27 @@ export const checkIfDoctor = (
     ? next()
     : response.unauthorized(lang as LangTypes, res);
 };
+
+export const middlewareHandler = (
+  doctorCallback: any,
+  patientCallback: any
+) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { role } = req.params;
+      const token_data = extractDataFromToken(req);
+
+      if (role) {
+        role === usersRoles.DOCTOR
+          ? doctorCallback(req, res, next)
+          : patientCallback(req, res, next);
+      } else if (token_data) {
+        token_data?.role === usersRoles.DOCTOR
+          ? doctorCallback(req, res, next)
+          : patientCallback(req, res, next);
+      }
+    } catch (error) {
+      response.somethingWentWrong("ar", res, error as Error);
+    }
+  };
+};

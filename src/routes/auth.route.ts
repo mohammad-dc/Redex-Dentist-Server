@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { checkAccessTokenValidation } from "../middlewares/checkAccessTokenValidation";
 import { checkRequestValidation } from "../middlewares/requestValidation";
+import { middlewareHandler } from "../middlewares/usersMiddlewares";
 import { AuthServices } from "../services/auth.service";
 import { loginSchema, registerSchema } from "../validations/auth.validation";
 
@@ -16,11 +17,14 @@ authRouter.post(
 authRouter.post(
   "/:role/login",
   checkRequestValidation(loginSchema),
-  authServices.login
+  middlewareHandler(authServices.loginDoctor, authServices.login)
 );
 
 authRouter.get(
   "/verify",
   checkAccessTokenValidation,
-  authServices.verifyAccount
+  middlewareHandler(
+    authServices.verifyDoctorAccount,
+    authServices.verifyAccount
+  )
 );

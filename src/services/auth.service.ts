@@ -204,7 +204,9 @@ export class AuthServices {
 
     try {
       const current_date = new Date();
-      const recent_date = new Date().setDate(new Date().getDate() - 7);
+      const recent_date = new Date();
+      recent_date.setDate(current_date.getDate() - 7);
+
       const { user_id, role } = extractDataFromToken(req);
 
       const result = await usersModel
@@ -228,7 +230,15 @@ export class AuthServices {
                 $expr: {
                   $and: [
                     { $eq: ["$$doctor_id", "$doctor"] },
-                    { $eq: [{ $month: "$createdAt" }, current_date.getDay()] },
+                    {
+                      $eq: [
+                        { $dayOfYear: "$createdAt" },
+                        current_date.getDay(),
+                      ],
+                    },
+                    {
+                      $eq: [{ $month: "$createdAt" }, current_date.getMonth()],
+                    },
                     {
                       $eq: [
                         { $year: "$createdAt" },
@@ -285,6 +295,7 @@ export class AuthServices {
                 _id: 1,
                 date: 1,
                 note: 1,
+                status: 1,
                 user: "$patient",
               },
             },
@@ -354,6 +365,7 @@ export class AuthServices {
                 _id: 1,
                 date: 1,
                 note: 1,
+                status: 1,
                 user: "$patient",
               },
             },
@@ -422,6 +434,7 @@ export class AuthServices {
                 _id: 1,
                 date: 1,
                 note: 1,
+                status: 1,
                 user: "$patient",
               },
             },
@@ -483,7 +496,17 @@ export class AuthServices {
                 createdAt: { $last: "$createdAt" },
               },
             },
-            { $sort: { $message_id: -1 } },
+            {
+              $project: {
+                _id: 0,
+                user: "$_id",
+                message_id: 1,
+                message: 1,
+                sender: 1,
+                createdAt: 1,
+              },
+            },
+            { $sort: { message_id: -1 } },
             { $limit: 20 },
           ],
         })
@@ -492,6 +515,9 @@ export class AuthServices {
           name: "$name",
           phone: "$phone",
           role: "$role",
+          email: "$email",
+          clinic_name: "$clinic_name",
+          bio: "$bio",
           image_url: "$image_url",
           city: lang === "ar" ? "$city.city_ar" : "$city.city_en",
           address: "$address",

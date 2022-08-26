@@ -49,6 +49,12 @@ reservationsRouter.get(
   reservationsService.getAllUserReservations
 );
 
+reservationsRouter.get(
+  "/:reservation_id",
+  checkAccessTokenValidation,
+  reservationsService.getReservation
+);
+
 //admin
 reservationsRouter.get(
   "/admin/count",

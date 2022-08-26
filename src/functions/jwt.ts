@@ -62,15 +62,18 @@ export const extractDataFromToken = (
   req: Request
 ): { user_id: string; role: string; user_name: string } => {
   const token = req.headers.authorization?.split(" ")[1];
-  const {
-    user_id,
-    role,
-    user_name,
-  }: { user_id: string; role: string; user_name: string } = jwtDecode(
-    token || ""
-  );
-
-  return { user_id, role, user_name };
+  if (token) {
+    const {
+      user_id,
+      role,
+      user_name,
+    }: { user_id: string; role: string; user_name: string } = jwtDecode(
+      token || ""
+    );
+    return { user_id, role, user_name };
+  } else {
+    return { user_id: "", role: "", user_name: "" };
+  }
 };
 
 export const extractDataFromAdminToken = (
