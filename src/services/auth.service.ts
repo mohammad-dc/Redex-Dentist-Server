@@ -115,6 +115,10 @@ export class AuthServices {
     const { lang } = req.params;
 
     try {
+      const current_date = new Date();
+      const recent_date = new Date();
+      recent_date.setDate(current_date.getDate() - 7);
+
       const { user_id, role } = extractDataFromToken(req);
 
       const result = await usersModel
@@ -127,6 +131,198 @@ export class AuthServices {
           foreignField: "_id",
         })
         .unwind("city")
+        //* get recent reservations
+        .lookup({
+          from: "reservations",
+          as: "recent_reservations",
+          let: { patient_id: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$$patient_id", "$patient"] },
+                    { $lte: ["$date", current_date] },
+                    { $gte: ["$date", recent_date] },
+                  ],
+                },
+              },
+            },
+            {
+              $lookup: {
+                from: "users",
+                as: "doctor",
+                let: { doctor_id: "$doctor" },
+                pipeline: [
+                  {
+                    $match: { $expr: { $eq: ["$$doctor_id", "$_id"] } },
+                  },
+                  {
+                    $lookup: {
+                      as: "city",
+                      localField: "city",
+                      from: "cities",
+                      foreignField: "_id",
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: "$city",
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                  {
+                    $project: {
+                      _id: 1,
+                      name: 1,
+                      image_url: 1,
+                      address: 1,
+                      city: lang === "ar" ? "$city.city_ar" : "$city.city_en",
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              $unwind: {
+                path: "$doctor",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                date: 1,
+                note: 1,
+                status: 1,
+                user: "$doctor",
+              },
+            },
+            { $limit: 20 },
+          ],
+        })
+        //* get past reservations
+        .lookup({
+          from: "reservations",
+          as: "past_reservations",
+          let: { patient_id: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$$patient_id", "$patient"] },
+                    { $lte: ["$date", recent_date] },
+                  ],
+                },
+              },
+            },
+            {
+              $lookup: {
+                from: "users",
+                as: "doctor",
+                let: { doctor_id: "$doctor" },
+                pipeline: [
+                  {
+                    $match: { $expr: { $eq: ["$$doctor_id", "$_id"] } },
+                  },
+                  {
+                    $lookup: {
+                      as: "city",
+                      localField: "city",
+                      from: "cities",
+                      foreignField: "_id",
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: "$city",
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                  {
+                    $project: {
+                      _id: 1,
+                      name: 1,
+                      image_url: 1,
+                      address: 1,
+                      city: lang === "ar" ? "$city.city_ar" : "$city.city_en",
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              $unwind: {
+                path: "$doctor",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                date: 1,
+                note: 1,
+                status: 1,
+                user: "$doctor",
+              },
+            },
+            { $limit: 20 },
+          ],
+        })
+        //* chat_list
+        .lookup({
+          as: "chat_list",
+          from: "chats",
+          let: { patient_id: "$_id" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$$patient_id", "$patient"] } } },
+            {
+              $lookup: {
+                as: "doctor",
+                from: "users",
+                let: { doctor_id: "$doctor" },
+                pipeline: [
+                  { $match: { $expr: { $eq: ["$$doctor_id", "$_id"] } } },
+                  {
+                    $project: {
+                      _id: 1,
+                      name: 1,
+                      image_url: 1,
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              $unwind: {
+                path: "$doctor",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $group: {
+                _id: "$doctor",
+                message_id: { $last: "$_id" },
+                message: { $last: "$message" },
+                sender: { $last: "$sender" },
+                createdAt: { $last: "$createdAt" },
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                user: "$_id",
+                message_id: 1,
+                message: 1,
+                sender: 1,
+                createdAt: 1,
+              },
+            },
+            { $sort: { message_id: -1 } },
+            { $limit: 20 },
+          ],
+        })
         .project({
           _id: "$_id",
           name: "$name",
@@ -136,6 +332,11 @@ export class AuthServices {
           city: lang === "ar" ? "$city.city_ar" : "$city.city_en",
           address: "$address",
           work_time: 1,
+          works: [],
+          today_reservations: [],
+          recent_reservations: 1,
+          past_reservations: 1,
+          chat_list: 1,
         });
 
       !result[0]
@@ -158,6 +359,10 @@ export class AuthServices {
     const { phone, password } = req.body;
 
     try {
+      const current_date = new Date();
+      const recent_date = new Date();
+      recent_date.setDate(current_date.getDate() - 7);
+
       const result = await usersModel
         .aggregate([])
         .match({ phone, role })
@@ -168,16 +373,315 @@ export class AuthServices {
           foreignField: "_id",
         })
         .unwind("city")
+        //* get today reservations
+        .lookup({
+          from: "reservations",
+          as: "today_reservations",
+          let: { doctor_id: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$$doctor_id", "$doctor"] },
+                    {
+                      $eq: [
+                        { $dayOfYear: "$createdAt" },
+                        current_date.getDay(),
+                      ],
+                    },
+                    {
+                      $eq: [{ $month: "$createdAt" }, current_date.getMonth()],
+                    },
+                    {
+                      $eq: [
+                        { $year: "$createdAt" },
+                        current_date.getFullYear(),
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              $lookup: {
+                from: "users",
+                as: "patient",
+                let: { patient_id: "$patient" },
+                pipeline: [
+                  {
+                    $match: { $expr: { $eq: ["$$patient_id", "$_id"] } },
+                  },
+                  {
+                    $lookup: {
+                      as: "city",
+                      localField: "city",
+                      from: "cities",
+                      foreignField: "_id",
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: "$city",
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                  {
+                    $project: {
+                      _id: 1,
+                      name: 1,
+                      image_url: 1,
+                      address: 1,
+                      city: lang === "ar" ? "$city.city_ar" : "$city.city_en",
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              $unwind: {
+                path: "$patient",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                date: 1,
+                note: 1,
+                status: 1,
+                user: "$patient",
+              },
+            },
+            { $limit: 20 },
+          ],
+        })
+        //* get recent reservations
+        .lookup({
+          from: "reservations",
+          as: "recent_reservations",
+          let: { doctor_id: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$$doctor_id", "$doctor"] },
+                    { $lte: ["$date", current_date] },
+                    { $gte: ["$date", recent_date] },
+                  ],
+                },
+              },
+            },
+            {
+              $lookup: {
+                from: "users",
+                as: "patient",
+                let: { patient_id: "$patient" },
+                pipeline: [
+                  {
+                    $match: { $expr: { $eq: ["$$patient_id", "$_id"] } },
+                  },
+                  {
+                    $lookup: {
+                      as: "city",
+                      localField: "city",
+                      from: "cities",
+                      foreignField: "_id",
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: "$city",
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                  {
+                    $project: {
+                      _id: 1,
+                      name: 1,
+                      image_url: 1,
+                      address: 1,
+                      city: lang === "ar" ? "$city.city_ar" : "$city.city_en",
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              $unwind: {
+                path: "$patient",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                date: 1,
+                note: 1,
+                status: 1,
+                user: "$patient",
+              },
+            },
+            { $limit: 20 },
+          ],
+        })
+        //* get past reservations
+        .lookup({
+          from: "reservations",
+          as: "past_reservations",
+          let: { doctor_id: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$$doctor_id", "$doctor"] },
+                    { $lte: ["$date", recent_date] },
+                  ],
+                },
+              },
+            },
+            {
+              $lookup: {
+                from: "users",
+                as: "patient",
+                let: { patient_id: "$patient" },
+                pipeline: [
+                  {
+                    $match: { $expr: { $eq: ["$$patient_id", "$_id"] } },
+                  },
+                  {
+                    $lookup: {
+                      as: "city",
+                      localField: "city",
+                      from: "cities",
+                      foreignField: "_id",
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: "$city",
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+                  {
+                    $project: {
+                      _id: 1,
+                      name: 1,
+                      image_url: 1,
+                      address: 1,
+                      city: lang === "ar" ? "$city.city_ar" : "$city.city_en",
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              $unwind: {
+                path: "$patient",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $project: {
+                _id: 1,
+                date: 1,
+                note: 1,
+                status: 1,
+                user: "$patient",
+              },
+            },
+            { $limit: 20 },
+          ],
+        })
+        //* works
+        .lookup({
+          as: "works",
+          from: "works",
+          let: { doctor_id: "$_id" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$$doctor_id", "$doctor"] } } },
+            {
+              $project: {
+                _id: 1,
+                image_url: 1,
+              },
+            },
+            { $limit: 20 },
+          ],
+        })
+        //* chat list
+        .lookup({
+          as: "chat_list",
+          from: "chats",
+          let: { doctor_id: "$_id" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$$doctor_id", "$doctor"] } } },
+            {
+              $lookup: {
+                as: "patient",
+                from: "users",
+                let: { patient_id: "$patient" },
+                pipeline: [
+                  { $match: { $expr: { $eq: ["$$patient_id", "$_id"] } } },
+                  {
+                    $project: {
+                      _id: 1,
+                      name: 1,
+                      image_url: 1,
+                    },
+                  },
+                ],
+              },
+            },
+            {
+              $unwind: {
+                path: "$patient",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $group: {
+                _id: "$patient",
+                message_id: { $last: "$_id" },
+                message: { $last: "$message" },
+                sender: { $last: "$sender" },
+                createdAt: { $last: "$createdAt" },
+              },
+            },
+            {
+              $project: {
+                _id: 0,
+                user: "$_id",
+                message_id: 1,
+                message: 1,
+                sender: 1,
+                createdAt: 1,
+              },
+            },
+            { $sort: { message_id: -1 } },
+            { $limit: 20 },
+          ],
+        })
         .project({
           _id: "$_id",
           name: "$name",
           phone: "$phone",
-          image_url: "$image_url",
           role: "$role",
+          email: "$email",
+          clinic_name: "$clinic_name",
+          bio: "$bio",
+          image_url: "$image_url",
           city: lang === "ar" ? "$city.city_ar" : "$city.city_en",
           address: "$address",
-          password: "$password",
           work_time: 1,
+          works: 1,
+          password: 1,
+          today_reservations: 1,
+          recent_reservations: 1,
+          past_reservations: 1,
+          chat_list: 1,
         });
 
       if (!result[0]) response.phoneWrong(lang as LangTypes, res);

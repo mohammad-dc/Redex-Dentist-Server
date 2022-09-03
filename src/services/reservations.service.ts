@@ -168,7 +168,7 @@ export class ReservationsService {
 
   async addNoteToReservation(req: Request, res: Response, next: NextFunction) {
     const { lang, _id } = req.params;
-    const { note } = req.params;
+    const { note } = req.body;
 
     try {
       const { user_id } = extractDataFromToken(req);
@@ -192,7 +192,8 @@ export class ReservationsService {
     next: NextFunction
   ) {
     const { lang } = req.params;
-    const { skip, status } = req.query;
+    const { skip } = req.query;
+    const { status, user } = req.body;
 
     try {
       const { user_id, role } = extractDataFromToken(req);
@@ -211,12 +212,12 @@ export class ReservationsService {
         filter.patient = new ObjectId(user_id);
       }
 
-      if (status) {
-        filter.status = status as ReservationsStatusType;
-      }
       const result = await reservationsModel
         .aggregate([])
-        .match(filter)
+        .match({
+          ...filter,
+          status: status?.length > 0 ? { $in: status } : { $ne: null },
+        })
         .lookup({
           as: `${type}`,
           localField: `${type}`,
@@ -232,7 +233,9 @@ export class ReservationsService {
         })
         .unwind(`${type}.city`)
         .project({
+          _id: 1,
           user: {
+            _id: `$${type}._id`,
             name: `$${type}.name`,
             image_url: `$${type}.image_url`,
             city:
@@ -242,6 +245,9 @@ export class ReservationsService {
           date: "$date",
           note: "$note",
           status: "$status",
+        })
+        .match({
+          "user.name": user ? { $regex: user, $options: "i" } : { $ne: null },
         })
         .skip(skip ? parseInt(skip as string) : 0)
         .limit(5);
@@ -293,6 +299,7 @@ export class ReservationsService {
     try {
       const results = await reservationsModel
         .aggregate([])
+        .match({ status: status ? status : { $ne: null } })
         .lookup({
           as: "patient",
           from: "users",
@@ -343,7 +350,6 @@ export class ReservationsService {
           day: day ? day : { $ne: -1 },
           month: month ? month : { $ne: -1 },
           year: year ? year : { $ne: -1 },
-          status: status ? status : { $ne: null },
         })
         .project({
           _id: "$_id",

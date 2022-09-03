@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { checkAccessTokenValidation } from "../middlewares/checkAccessTokenValidation";
+import { checkIfDoctor } from "../middlewares/usersMiddlewares";
 import { ReservationsService } from "../services/reservations.service";
 
 export const reservationsRouter = Router({ mergeParams: true });
@@ -16,6 +17,7 @@ reservationsRouter.post(
 reservationsRouter.post(
   "/note/add/:_id",
   checkAccessTokenValidation,
+  checkIfDoctor,
   reservationsService.addNoteToReservation
 );
 
@@ -43,7 +45,7 @@ reservationsRouter.post(
   reservationsService.declineReservation
 );
 
-reservationsRouter.get(
+reservationsRouter.post(
   "/",
   checkAccessTokenValidation,
   reservationsService.getAllUserReservations
