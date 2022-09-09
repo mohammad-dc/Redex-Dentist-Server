@@ -15,8 +15,14 @@ export class WorksService {
       const file = req.file as any;
       const image_url = await imageUploadProcess(file);
 
-      await new worksModel({ doctor: user_id, image_url }).save();
-      response.addedSuccess(lang as LangTypes, res);
+      const new_image = await new worksModel({
+        doctor: user_id,
+        image_url,
+      }).save();
+      response.addedSuccess(lang as LangTypes, res, {
+        _id: new_image._id,
+        image_url,
+      });
     } catch (error) {
       response.somethingWentWrong(lang as LangTypes, res, error as Error);
     }

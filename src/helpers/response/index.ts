@@ -88,11 +88,12 @@ const signupSuccess = (lang: LangTypes, res: Response) =>
       lang === "en" ? EN_MESSAGES.SIGNUP_SUCCESS : AR_MESSAGES.SIGNUP_SUCCESS,
   });
 
-const addedSuccess = (lang: LangTypes, res: Response) =>
+const addedSuccess = (lang: LangTypes, res: Response, data?: any) =>
   res.status(status.CREATED).json({
     success: true,
     message:
       lang === "en" ? EN_MESSAGES.ADDED_SUCCESS : AR_MESSAGES.ADDED_SUCCESS,
+    data,
   });
 
 const sendVerificationCodeSuccess = (lang: LangTypes, res: Response) =>
